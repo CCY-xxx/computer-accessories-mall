@@ -1,0 +1,157 @@
+<%- include ../public/header.ejs%>
+<script type="text/javascript">
+    $('#myModal').on('shown.bs.modal', function () {
+          $('#myInput').focus()
+        })
+    </script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-2">
+
+            <%- include ../public/aslideleft.ejs%>
+
+        </div>
+        <div class="col-sm-10">
+            <ol class="breadcrumb">
+                <li class="active">商品管理
+                </li>
+                <li class="active">商品列表
+                </li>
+            </ol>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    搜索
+                </div>
+                <div class="panel-body">
+                    <form role="form" action="/admin/product/search"  class="form-inline" method="post">
+                        <div class="form-group">
+                            <label for="name">名称</label>
+                            <input type="text" name="title" class="form-control" id="name" placeholder="请输入名称">
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-default">开始搜索</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!--
+                列表展示
+            -->
+            <div class="table-responsive">
+            <!-- <img src="/upload/nature1.jpg" alt="qq"> -->
+                <table class="table table-striped ">
+                    <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>图标</th>
+                        <th>名称</th>
+                        <th>价格</th>
+                        <th>分类</th>
+
+                        <th class="text-center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                <% for(var i=0;i<list.length;i++){%>
+              
+                  
+                <tr>
+                    <td><%=list[i].productId%></td>
+                    <td><img  width="100" src="/<%=list[i].productImage%>" alt=""/></td>
+                    <td><%=list[i].title%></td>
+                    <td><%=list[i].price%></td>
+                    <td><%=list[i].brand%></td>
+                    
+                    <td class="text-center">
+                        <a href="/admin/product/load?id=<%=list[i]._id%>" class="btn btn-success">下载图片</a>
+                        <a href="/admin/product/edit?id=<%=list[i]._id%>" class="btn btn-success">修改</a>
+                        <a href="/admin/product/delete?id=<%=list[i]._id%>" class="btn btn-danger">删除</a>
+                     
+                    </td>
+                </tr>
+                <%}%>
+                   
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+<ul class="pagination pagination-centered">
+    <!--处理数字显示个数-->
+     <% var prevNum = 6; var nextNum=6;%>
+     
+     <%if(pager.pageCount-pager.pageCurrent > 5){%>
+      <% prevNum = 5 %>
+     <%} else {%>
+        <%prevNum = prevNum - (pager.pageCount-pager.pageCurrent)%>
+     <%}%>
+     <%if(pager.pageCurrent-5 > 0){%>
+      <% nextNum = 5 %>
+     <%} else {%>
+         <%nextNum = nextNum - (pager.pageCurrent) %>
+     <%}%> 
+
+    <% if(pager.pageCount-pager.pageCurrent > 5 &&pager.pageCurrent-5 > 0 ){%>
+          <% prevNum=5%>
+          <% nextNum=4%>
+      <%}%>
+    <!--处理数字显示个数 end-->
+    <li class="disabled"><a href="javascript:void(0)"> 共<%= pager.maxNum%>条</a></li>
+    <li class="disabled"><a href="javascript:void(0)"> 总<%= pager.pageCount%> 页 </a></li>
+    <%if(pager.maxNum==0){%>
+      <li class="disabled"><a href="javascript:void(0)">首页</a></li>
+    <%}else{%>
+      <li><a href="<%=pager.pagePath%>current=1">首页</a></li>
+    <%}%>
+    <!--判断有没有前一页-->
+
+    <%if(pager.pageCurrent==1){%>
+       <li class="disabled"><a href="javascript:void(0)">上一页</a></li>
+    <%}else{%>
+       <%if(pager.maxNum==0){%>
+        <li class="disabled"><a href="javascript:void(0)">上一页</a></li>
+       <%}else{%>
+        <li><a href="<%=pager.pagePath%>current=<%=parseInt(pager.pageCurrent)-1%>">上一页</a></li>
+       <%}%> 
+    <%}%> 
+    <!--判断有没有前一页  end-->
+
+      <!--循环显示页码-->
+     <% for(var i = prevNum; i > 0; i--){ %>
+     <%  if( parseInt(pager.pageCurrent)-i > 0 ) { %>
+       <li><a href="<%=pager.pagePath%>current=<%=parseInt(pager.pageCurrent)-i%>"><%=(parseInt(pager.pageCurrent)-i)%></a></li>
+     <%}}%>
+     <li class="active"><a href="<%=pager.pagePath%>current=<%=pager.pageCurrent%>" ><%=pager.pageCurrent%></a></li>
+     <% for(var i = 1; i <=nextNum; i++){ %>
+     <%  if( parseInt(pager.pageCurrent)+i <= pager.pageCount ) { %>
+       <li><a href="<%=pager.pagePath%>current=<%=parseInt(pager.pageCurrent)+i%>"><%=parseInt(pager.pageCurrent)+i%></a></li>
+     <%}}%>
+     
+     <!--循环显示页码  end-->
+   <!--判断有没有下一页-->
+   <%if(pager.pageCurrent==pager.pageCount){%>
+       <li class="disabled"><a href="javascript:void(0)">下一页</a></li>
+    <%}else{%>
+     <%if(pager.maxNum==0){%>
+        <li class="disabled"><a href="javascript:void(0)">下一页</a></li>
+       <%}else{%>
+         <li><a  href="<%=pager.pagePath%>current=<%=parseInt(pager.pageCurrent)+1%>">下一页</a></li>
+       <%}%> 
+   
+    <%}%> 
+   <!--判断有没有下一页  end-->
+    <%if(pager.maxNum==0){%>
+      <li class="disabled"><a href="javascript:void(0)">尾页</a></li>
+    <%}else{%>
+         <li><a href="<%=pager.pagePath%>current=<%=pager.pageCount%>">尾页</a></li>
+    <%}%>
+  </ul>
+ 
+
+
+</body>
+</html>

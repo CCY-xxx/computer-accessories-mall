@@ -1,0 +1,202 @@
+<%- include ../public/header.ejs%>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-2">
+
+            <%- include ../public/aslideleft.ejs%>
+
+        </div>
+        <div class="col-sm-10">
+            <ol class="breadcrumb">
+                <li class="active">公告管理
+                </li>
+                <li class="active">公告列表
+                </li>
+            </ol>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    搜索
+                </div>
+                <div class="panel-body">
+                    <form role="form" action="/admin/notice/search"  class="form-inline" method="post">
+                        <div class="form-group">
+                            <label for="name">公告关键字：</label>
+                            <input type="text" name="title" class="form-control" id="name" placeholder="请输入名称">
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">开始搜索</button>
+                        </div>
+                        <input class="btn btn-default" type="reset" value="重置" onclick="location.href='/admin/notice'" />
+                    </form>
+                </div>
+            </div>
+            <!-- <span class=" btn-primary" style="position: absolute;top:20px;left:450px" id="msgId" ></span> -->
+            <div style="position: absolute;top:20px;left:450px;opacity: 0;" id="msgId"  class="alert alert-success" role="alert"></div>
+            <!--
+                列表展示
+            -->
+            <div class="table-responsive">
+                
+                <table class="table table-striped " style="word-break:break-all; word-wrap:break-all;">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                       
+                        <th>公告内容</th>
+                        <th>公告编号</th>
+                        <th>创建时间</th>
+                        <th>更新时间</th>
+
+
+                        <th class="text-center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                <% for(var i=0;i<list.length;i++){%>
+					 <tr>
+                        <td><%=i+1%></td>
+
+                        <td style="word-break:break-all; word-wrap:break-all;"><%=list[i].info%></td>
+                        <td><%=list[i].noticeId%></td>
+                        <td><%=list[i].createTime%></td>
+                        <td><%=list[i].updateTime%></td>
+                     
+                        <td class="text-center">
+
+                            <a href="/admin/notice/findNotice?id=<%=list[i]._id%>" class="btn btn-success">编辑查看</a>
+                            <a href="/admin/notice/delNotice?id=<%=list[i]._id%>" class="btn btn-danger" onclick="del()">删除</a>
+                       
+                            <%if(list[i].isShow){%>
+                                <a href="/admin/notice/isShow?id=<%=list[i]._id%>" class="btn btn-danger" ><span onclick="hide()">隐藏</span></a>
+                              <%}else{%>
+                                <a href="/admin/notice/isShow?id=<%=list[i]._id%>" class="btn btn-danger" ><span onclick="show()">显示</span></a>
+                              <%}%>
+                       </td>
+                    </tr>
+                    <%}%>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+<ul class="pagination pagination-centered">
+    <!--处理数字显示个数-->
+     <% var prevNum = 6; var nextNum=6;%>
+     
+     <%if(pager.pageCount-pager.pageCurrent > 5){%>
+      <% prevNum = 5 %>
+     <%} else {%>
+        <%prevNum = prevNum - (pager.pageCount-pager.pageCurrent)%>
+     <%}%>
+     <%if(pager.pageCurrent-5 > 0){%>
+      <% nextNum = 5 %>
+     <%} else {%>
+         <%nextNum = nextNum - (pager.pageCurrent) %>
+     <%}%> 
+
+    <% if(pager.pageCount-pager.pageCurrent > 5 &&pager.pageCurrent-5 > 0 ){%>
+          <% prevNum=5%>
+          <% nextNum=4%>
+      <%}%>
+    <!--处理数字显示个数 end-->
+    <li class="disabled"><a href="javascript:void(0)"> 共<%= pager.maxNum%>条</a></li>
+    <li class="disabled"><a href="javascript:void(0)"> 总<%= pager.pageCount%> 页 </a></li>
+    <%if(pager.maxNum==0){%>
+      <li class="disabled"><a href="javascript:void(0)">首页</a></li>
+    <%}else{%>
+      <li><a href="<%=pager.pagePath%>current=1">首页</a></li>
+    <%}%>
+    <!--判断有没有前一页-->
+
+    <%if(pager.pageCurrent==1){%>
+       <li class="disabled"><a href="javascript:void(0)">上一页</a></li>
+    <%}else{%>
+       <%if(pager.maxNum==0){%>
+        <li class="disabled"><a href="javascript:void(0)">上一页</a></li>
+       <%}else{%>
+        <li><a href="<%=pager.pagePath%>current=<%=parseInt(pager.pageCurrent)-1%>">上一页</a></li>
+       <%}%> 
+    <%}%> 
+    <!--判断有没有前一页  end-->
+
+      <!--循环显示页码-->
+     <% for(var i = prevNum; i > 0; i--){ %>
+     <%  if( parseInt(pager.pageCurrent)-i > 0 ) { %>
+       <li><a href="<%=pager.pagePath%>current=<%=parseInt(pager.pageCurrent)-i%>"><%=(parseInt(pager.pageCurrent)-i)%></a></li>
+     <%}}%>
+     <li class="active"><a href="<%=pager.pagePath%>current=<%=pager.pageCurrent%>" ><%=pager.pageCurrent%></a></li>
+     <% for(var i = 1; i <=nextNum; i++){ %>
+     <%  if( parseInt(pager.pageCurrent)+i <= pager.pageCount ) { %>
+       <li><a href="<%=pager.pagePath%>current=<%=parseInt(pager.pageCurrent)+i%>"><%=parseInt(pager.pageCurrent)+i%></a></li>
+     <%}}%>
+     
+     <!--循环显示页码  end-->
+   <!--判断有没有下一页-->
+   <%if(pager.pageCurrent==pager.pageCount){%>
+       <li class="disabled"><a href="javascript:void(0)">下一页</a></li>
+    <%}else{%>
+     <%if(pager.maxNum==0){%>
+        <li class="disabled"><a href="javascript:void(0)">下一页</a></li>
+       <%}else{%>
+         <li><a  href="<%=pager.pagePath%>current=<%=parseInt(pager.pageCurrent)+1%>">下一页</a></li>
+       <%}%> 
+   
+    <%}%> 
+   <!--判断有没有下一页  end-->
+    <%if(pager.maxNum==0){%>
+      <li class="disabled"><a href="javascript:void(0)">尾页</a></li>
+    <%}else{%>
+         <li><a href="<%=pager.pagePath%>current=<%=pager.pageCount%>">尾页</a></li>
+    <%}%>
+  </ul>
+</body>
+</html>
+<script>
+     function hideMsg() {
+　　　　　　var msg = document.getElementById("msgId");
+            // msg.style.display='none'
+           
+           
+            msg.style.opacity='0'
+            msg.style.transition='opacity 2s'
+            //   msg.style.display='none'
+// 　　　　　　msg.innerHTML = "";
+            setTimeout(' location.reload()', 1000)
+        }
+function hide(){
+    
+    　　var msg = document.getElementById("msgId");
+    console.log(msg)
+    msg.innerHTML = "此条公告已隐藏";
+    // msg.style.display='block'
+    msg.style.opacity='1'
+    msg.style.transition='opacity 2s'
+     setTimeout("hideMsg()", 2000)
+}
+function show(){
+    　　var msg = document.getElementById("msgId");
+    console.log(msg)
+    msg.innerHTML = "此条公告已显示";
+    // msg.style.display='block'
+    msg.style.opacity='1'
+    msg.style.transition='opacity 2s'
+
+     setTimeout("hideMsg()",2000)
+}
+function del(){
+    　　var msg = document.getElementById("msgId");
+    console.log(msg)
+    msg.innerHTML = "删除成功";
+    // msg.style.display='block'
+    msg.style.opacity='1'
+    msg.style.transition='opacity 1s'
+
+    setTimeout(' location.reload()', 1000)
+}
+</script>

@@ -1,0 +1,96 @@
+<%- include ../public/header.ejs%>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-2">
+
+            <%- include ../public/aslideleft.ejs%>
+
+        </div>
+        <div class="col-sm-10">
+            <ol class="breadcrumb">
+                <li class="active">用户管理
+                </li>
+                <li class="active" ><a href="/admin/user">用户列表...</a>
+                    </li>
+                <li class="active">用户详细信息
+                </li>
+            </ol>
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+                    修改用户信息
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive input-form">
+                        <form action="/admin/user/editUser" method="post" enctype="multipart/form-data">
+                            <ul>
+
+                                <input type="hidden" name="_id" value="<%=userDoc._id%>" />
+
+
+                                <li style="font-size:16px;"> 用户名: <input type="text" name="userName" value="<%=userDoc.userName%>" /></li>
+                                <li style="font-size:16px;"> 用户邮箱: <input type="text" name="userId" value="<%=userDoc.userId%>" /></li>
+                                <li style="font-size:16px;"> 用户密码: <input type="text" name="usrPwd" value="<%=userDoc.userPwd%>" /></li>
+                                <li> <h4>用户订单:</h4>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-striped ">
+                                            <thead>
+                                                <tr>
+                                                    <th>编号</th>
+
+                                                    <th>订单号</th>
+                                                    <th>订单总额</th>
+                                                    <th>订单详情</th>
+
+
+                                                    <!-- <th class="text-center">操作</th> -->
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+
+                                                <% for(var i=0;i<userDoc.orderList.length;i++){%>
+                                                <tr>
+                                                    <td><%=i+1%></td>
+
+                                                    <td><%=userDoc.orderList[i].orderId%></td>
+                                                    <td><%=userDoc.orderList[i].orderTotal%></td>
+
+                                                    <td><a href="/admin/user/findUserOrder?orderId=<%=userDoc.orderList[i].orderId%>&&_id=<%=userDoc._id%>"
+                                                            class="btn btn-success">查看</a>
+                                                    </td>
+                                                </tr>
+
+                                                <%}%>
+                                    </tbody>
+                                    </table>
+                                    </div>
+                                </li>
+
+                      
+
+
+                                <li>
+                                    <br/>
+                                    <button type="submit" class="btn btn-default">提交</button>
+                                </li>
+
+                            </ul>
+
+
+                        </form>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
