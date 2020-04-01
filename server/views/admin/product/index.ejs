@@ -35,6 +35,8 @@
                     </form>
                 </div>
             </div>
+            <div style="position: absolute;top:20px;left:450px;opacity: 0;" id="msgId"  class="alert alert-success" role="alert"></div>
+
             <!--
                 列表展示
             -->
@@ -48,7 +50,10 @@
                         <th>名称</th>
                         <th>价格</th>
                         <th>分类</th>
-
+                        <th>状态</th>
+                        <th>销量</th>
+                        <th>创建时间</th>
+                        
                         <th class="text-center">操作</th>
                     </tr>
                     </thead>
@@ -63,12 +68,24 @@
                     <td><%=list[i].title%></td>
                     <td><%=list[i].price%></td>
                     <td><%=list[i].brand%></td>
+                    <%if(list[i].isPush){%>
+                        <td><a class="btn btn-success" >已推送</a></td>
+                      <%}else{%>
+                        <td><a class="btn btn-danger" >未推送</a></td>
+                      <%}%>
+                    <td><%=list[i].saleNum%></td>
+                    <td><%=list[i].createTime%></td>
                     
                     <td class="text-center">
                         <a href="/admin/product/load?id=<%=list[i]._id%>" class="btn btn-success">下载图片</a>
+                        <%if(list[i].isPush){%>
+                            <a href="/admin/product/isPush?id=<%=list[i]._id%>" class="btn btn-danger" ><span onclick="hide()">取消推送</span></a>
+                          <%}else{%>
+                            <a href="/admin/product/isPush?id=<%=list[i]._id%>" class="btn btn-danger" ><span onclick="show()">推送</span></a>
+                          <%}%>
                         <a href="/admin/product/edit?id=<%=list[i]._id%>" class="btn btn-success">修改</a>
                         <a href="/admin/product/delete?id=<%=list[i]._id%>" class="btn btn-danger">删除</a>
-                     
+                        
                     </td>
                 </tr>
                 <%}%>
@@ -155,3 +172,46 @@
 
 </body>
 </html>
+<script>
+    function hideMsg() {
+　　　　　　var msg = document.getElementById("msgId");
+           // msg.style.display='none'
+          
+          
+           msg.style.opacity='0'
+           msg.style.transition='opacity 2s'
+           //   msg.style.display='none'
+// 　　　　　　msg.innerHTML = "";
+           setTimeout(' location.reload()', 1000)
+       }
+function hide(){
+   
+   　　var msg = document.getElementById("msgId");
+   console.log(msg)
+   msg.innerHTML = "已取消推送";
+   // msg.style.display='block'
+   msg.style.opacity='1'
+   msg.style.transition='opacity 2s'
+    setTimeout("hideMsg()", 2000)
+}
+function show(){
+   　　var msg = document.getElementById("msgId");
+   console.log(msg)
+   msg.innerHTML = "已推送";
+   // msg.style.display='block'
+   msg.style.opacity='1'
+   msg.style.transition='opacity 2s'
+
+    setTimeout("hideMsg()",2000)
+}
+function del(){
+   　　var msg = document.getElementById("msgId");
+   console.log(msg)
+   msg.innerHTML = "删除成功";
+   // msg.style.display='block'
+   msg.style.opacity='1'
+   msg.style.transition='opacity 1s'
+
+   setTimeout(' location.reload()', 1000)
+}
+</script>

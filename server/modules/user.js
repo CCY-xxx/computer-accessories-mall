@@ -20,7 +20,11 @@ var userSchema = new mongoose.Schema({
               "from" : String,
               "productImage" : String,
               "productNum" : Number,
-              "checked" : String
+              "checked" : String,
+              "isPush":Boolean,
+              "createTime":String,
+              "updateTime":String,
+              "saleNum":Number
           } 
       ],
       "orderStatus" : String,
@@ -38,6 +42,10 @@ var userSchema = new mongoose.Schema({
     "productImage" : String,
     "checked":String,
     "productNum":Number,
+    "isPush":Boolean,
+    "createTime":String,
+    "updateTime":String,
+    "saleNum":Number
     }
   ],
   "addressList":[

@@ -40,20 +40,81 @@
             >{{item.startPrice}} - {{item.endPrice}}</a>
           </button>
         </div>
-        <div class="filter-nav">
-          <span class="sortby">价格排序:</span>
-          <a href="javascript:void(0)" class="default cur">默认</a>
-          <a
-            href="javascript:void(0)"
-            class="price"
-            v-bind:class="{'sort-up':sortFlag}"
-            @click="sortGoods()"
-          >
-            价格
-            <svg class="icon icon-arrow-short">
-              <use xlink:href="#icon-arrow-short" />
-            </svg>
-          </a>
+        <div class="filter-nav" style="display:flex;justifyContent:space-between">
+          <div>
+            <a-button type="primary" @click="pushGoods()">推荐</a-button>
+          </div>
+          <div style="width: 290px;display: flex;">
+            <div>
+              <a-dropdown>
+                <a-menu slot="overlay" @click="handleMenuClick">
+                  <a-menu-item key="1">
+                    <a-icon type="user" />按价格排序（默认）
+                  </a-menu-item>
+                  <a-menu-item key="2">
+                    <a-icon type="user" />按销量排序
+                  </a-menu-item>
+                  <a-menu-item key="3">
+                    <a-icon type="user" />按时间排序
+                  </a-menu-item>
+                </a-menu>
+                <a-button style="margin-left: 8px">
+                  请选择条件排序
+                  <a-icon type="down" />
+                </a-button>
+              </a-dropdown>
+            </div>
+
+            <div v-if="sortType=='2'">
+              <a-button
+                href="javascript:void(0)"
+                class="price"
+                v-bind:class="{'sort-up':saleSortFlag}"
+                @click="saleSortGoods()"
+              >
+                销量
+                <!-- <svg class="icon icon-arrow-short">
+                <use xlink:href="#icon-arrow-short" />
+                </svg>-->
+                <a-icon v-if="saleSortFlag" type="sort-descending" />
+                <a-icon v-if="!saleSortFlag" type="sort-ascending" />
+              </a-button>
+            </div>
+
+            <div v-if="sortType=='1'">
+              <a-button
+                href="javascript:void(0)"
+                class="price"
+                v-bind:class="{'sort-up':sortFlag}"
+                @click="sortGoods()"
+              >
+                价格
+                <!-- <svg class="icon icon-arrow-short">
+                <use xlink:href="#icon-arrow-short" />
+                </svg>-->
+                <a-icon v-if="sortFlag" type="sort-descending" />
+                <a-icon v-if="!sortFlag" type="sort-ascending" />
+              </a-button>
+            </div>
+            <div v-if="sortType=='3'">
+              <a-button
+                href="javascript:void(0)"
+                class="price"
+                v-bind:class="{'sort-up':dateSortFlag}"
+                @click="dateSortGoods()"
+              >
+                时间
+                <!-- <svg class="icon icon-arrow-short">
+                <use xlink:href="#icon-arrow-short" />
+                </svg>-->
+                <a-icon v-if="dateSortFlag" type="sort-descending" />
+                <a-icon v-if="!dateSortFlag" type="sort-ascending" />
+              </a-button>
+            </div>
+            
+          </div>
+        
+
           <!-- <a href="javascript:void(0)" class="filterby stopPop" @click.stop="showFilterPop">筛选</a> -->
         </div>
         <div class="accessory-result">
@@ -74,14 +135,15 @@
             <div class="accessory-list col-5">
               <ul>
                 <li
-                 
                   v-for="(item,index) in goodsList"
                   :key="index"
                   v-if="item.productImage.split('\\')[0]==='upload'"
                 >
                   <div class="pic">
                     <!-- <router-link  :to="{ path: 'goodDetail', query: { id: item._id }}" @click="toGoodDetail(item._id)"> -->
-                    <router-link :to="{ name: 'GoodDetail', params: { id: item._id,goodInfo:item }}">
+                    <router-link
+                      :to="{ name: 'GoodDetail', params: { id: item._id,goodInfo:item }}"
+                    >
                       <img
                         width="230"
                         height="150"
@@ -109,50 +171,50 @@
               infinite-scroll-distance="20"
             >
               <img src="./../assets/loading-spinning-bubbles.svg" v-show="loading" />
-            </div> -->
+            </div>-->
           </div>
         </div>
         <div class="pagnation">
-          <a-pagination 
-          v-model="page"
-           :total="total"
+          <a-pagination
+            v-model="page"
+            :total="total"
             :pageSize="pageSize"
-             :defaultCurrent="1"
-              @change="onChange" 
-              showQuickJumper
-               :showTotal="total => `总共 ${total} 条`"
-              showLessItems
-               showSizeChanger
-      @showSizeChange="onShowSizeChange"
-          :pageSizeOptions="pageSizeOptions"
-               >
-<template slot="buildOptionText" slot-scope="props">
-      <span v-if="props.value!=='20'">{{props.value}}条/页</span>
-      <span v-if="props.value==='20'">全部</span>
-    </template>
-
+            :defaultCurrent="1"
+            @change="onChange"
+            showQuickJumper
+            :showTotal="total => `总共 ${total} 条`"
+            showLessItems
+            showSizeChanger
+            @showSizeChange="onShowSizeChange"
+            :pageSizeOptions="pageSizeOptions"
+          >
+            <template slot="buildOptionText" slot-scope="props">
+              <span v-if="props.value!=='20'">{{props.value}}条/页</span>
+              <span v-if="props.value==='20'">全部</span>
+            </template>
           </a-pagination>
         </div>
       </div>
     </div>
-       <div class="noticeWrap">
-         <a-button type="danger" style="position:absolute;top:10px;right:20px;zIndex:99999"  @click="isShowNotice=!isShowNotice">公告</a-button>
+    <div class="noticeWrap">
+      <a-button
+        type="danger"
+        style="position:absolute;top:10px;right:20px;zIndex:99999"
+        @click="isShowNotice=!isShowNotice"
+      >公告</a-button>
       <div class="notice" :style="{display:isShowNotice?'none':'block'}">
-    <a-card  title="商城公告" style="background:#5ae7da;opacity:0.6">
-      <!-- <a href="#" slot="extra" >more</a> -->
-      <div  v-for="(item,index) in noticeList"
-                  :key="index"
-                 >{{index+1}}、{{item.info}}</div>
-      <!-- <p>card content</p>
+        <a-card title="商城公告" style="background:#5ae7da;opacity:0.6">
+          <!-- <a href="#" slot="extra" >more</a> -->
+          <div v-for="(item,index) in noticeList" :key="index">{{index+1}}、{{item.info}}</div>
+          <!-- <p>card content</p>
       <p>card content</p>
       <p>card content</p>
       <p>card content</p>
       <p>card content</p>
-      <p>card content</p> -->
-    </a-card>
-  
-  </div>
-       </div>
+          <p>card content</p>-->
+        </a-card>
+      </div>
+    </div>
     <!-- 回顶部按钮为一张50*50的图片 -->
     <!-- btnFlag 控制图片显示隐藏 -->
     <!-- backTop 回顶部的方法 -->
@@ -165,7 +227,7 @@
       @click="backTop"
       title="返回顶部"
     />
-   
+
     <modal v-bind:mdShow="mdShow" v-on:close="closeModal">
       <p slot="message">请先登录,否则无法加入到购物车中!</p>
       <div slot="btnGroup">
@@ -185,7 +247,6 @@
       </div>
     </modal>
     <div class="md-overlay" v-show="overLayFlag" @click.stop="closePop"></div>
-
     <nav-footer></nav-footer>
   </div>
 </template>
@@ -199,9 +260,10 @@ export default {
   data() {
     return {
       // current: 1,
-        isShowNotice:false,
-      noticeList:[],
-      pageSizeOptions: ['5', '10','15','20'],
+      sortType: "1",
+      isShowNotice: false,
+      noticeList: [],
+      pageSizeOptions: ["5", "10", "15", "20"],
       btnFlag: false,
       msg: "",
       defaultGoods: false,
@@ -210,13 +272,15 @@ export default {
       keyword: "",
       goodsList: [],
       sortFlag: true,
+      saleSortFlag: true,
+      dateSortFlag: true,
       page: 1,
       pageSize: 10,
       busy: true,
       loading: false,
       mdShow: false,
       mdShowCart: false,
-      total:0,
+      total: 0,
       priceFilter: [
         {
           startPrice: 0.0,
@@ -241,7 +305,6 @@ export default {
     };
   },
   mounted() {
-    
     this.getAllGoods();
     this.getGoodsList();
     this.getNoticeList();
@@ -260,15 +323,22 @@ export default {
     Modal
   },
   methods: {
-     onChange(current) {
-        this.page = current;
-        console.log(this.page)
-        this.getGoodsList()
-      },
+    handleButtonClick(e) {
+      console.log("click left button", e);
+    },
+    handleMenuClick(e) {
+      console.log("click", e);
+      this.sortType = e.key;
+    },
+    onChange(current) {
+      this.page = current;
+      console.log(this.page);
+      this.getGoodsList();
+    },
     onShowSizeChange(current, pageSize) {
-        this.pageSize = pageSize;
-        this.getGoodsList()
-      },
+      this.pageSize = pageSize;
+      this.getGoodsList();
+    },
     // 点击图片回到顶部方法，加计时器是为了过渡顺滑
     backTop() {
       const that = this;
@@ -281,7 +351,12 @@ export default {
         }
       }, 16);
     },
-
+    //推送功能
+    pushGoods() {
+      this.goodsList = this.goodsList.filter(item => {
+        return item.isPush == true;
+      });
+    },
     // 为了计算距离顶部的高度，当高度大于60显示回顶部图标，小于60则隐藏
     scrollToTop() {
       const that = this;
@@ -308,6 +383,9 @@ export default {
         page: this.page,
         pageSize: this.pageSize,
         sort: this.sortFlag ? 1 : -1,
+        saleSortFlag: this.saleSortFlag ? 1 : -1,
+        dateSort: this.dateSortFlag ? 1 : -1,
+        sortType: this.sortType,
         priceLevel: this.priceChecked
       };
 
@@ -342,11 +420,14 @@ export default {
           console.log(this.goodsList);
         });
     },
-      getAllGoods(flag) {
+    getAllGoods(flag) {
       var param = {
         // page: this.page,
         // pageSize: this.pageSize,
         sort: this.sortFlag ? 1 : -1,
+        saleSortFlag: this.saleSortFlag ? 1 : -1,
+        dateSort: this.dateSortFlag ? 1 : -1,
+        sortType: this.sortType,
         priceLevel: this.priceChecked
       };
       // this.loading = true;
@@ -358,10 +439,8 @@ export default {
           var res = response.data;
           console.log(res);
           if (res.status == "0") {
-           
-              this.goodsList = res.result.list;
-              this.total=res.result.list.length
-           
+            this.goodsList = res.result.list;
+            this.total = res.result.list.length;
           } else {
             this.goodsList = [];
           }
@@ -373,6 +452,9 @@ export default {
         page: this.page,
         pageSize: this.pageSize,
         sort: this.sortFlag ? 1 : -1,
+        saleSort: this.saleSortFlag ? 1 : -1,
+        dateSort: this.dateSortFlag ? 1 : -1,
+        sortType: this.sortType,
         priceLevel: this.priceChecked
       };
       // this.loading = true;
@@ -393,8 +475,8 @@ export default {
             //     this.busy = false;
             //   }
             // } else {
-              this.goodsList = res.result.list;
-              // this.busy = false;
+            this.goodsList = res.result.list;
+            // this.busy = false;
             // }
           } else {
             this.goodsList = [];
@@ -404,6 +486,16 @@ export default {
     },
     sortGoods() {
       this.sortFlag = !this.sortFlag;
+      this.page = 1;
+      this.getGoodsList();
+    },
+    saleSortGoods() {
+      this.saleSortFlag = !this.saleSortFlag;
+      this.page = 1;
+      this.getGoodsList();
+    },
+    dateSortGoods() {
+      this.dateSortFlag = !this.dateSortFlag;
       this.page = 1;
       this.getGoodsList();
     },
@@ -463,17 +555,17 @@ export default {
       this.overLayFlag = false;
       this.mdShowCart = false;
     },
-        getNoticeList(){
-      axios.get('/api/notice/noticeList').then((res)=>{
-          console.log(res)
+    getNoticeList() {
+      axios.get("/api/notice/noticeList").then(res => {
+        console.log(res);
 
-        if(res.data.status=='0'){
-          this.noticeList=res.data.result
-          console.log(this.noticeList)
-          return
+        if (res.data.status == "0") {
+          this.noticeList = res.data.result;
+          console.log(this.noticeList);
+          return;
         }
-        return 
-      })
+        return;
+      });
     }
   }
 };
@@ -487,19 +579,19 @@ export default {
   right: 20px;
   bottom: 100px;
 }
-.pagnation{
-  margin-left:500px;
+.pagnation {
+  margin-left: 500px;
 }
-.noticeWrap{
-position: absolute;
-    top: 72px;
-    right: 11px;
-    width: 230px;
-    /* height: 255px; */
-    /* background: yellow; */
+.noticeWrap {
+  position: absolute;
+  top: 72px;
+  right: 11px;
+  width: 230px;
+  /* height: 255px; */
+  /* background: yellow; */
 }
-.ant-card-body{
-  height:180px;
+.ant-card-body {
+  height: 180px;
   overflow: auto;
 }
 </style>

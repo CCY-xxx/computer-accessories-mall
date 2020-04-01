@@ -12,6 +12,10 @@ var produtSchema = new Schema({
   "productImage" : String,
   "checked":String,
   "productNum":Number,
+  "isPush":Boolean,
+  "createTime":String,
+  "updateTime":String,
+  "saleNum":Number
 });
 
 module.exports = mongoose.model('Products',produtSchema);

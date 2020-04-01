@@ -48,6 +48,7 @@
                         <th>公告编号</th>
                         <th>创建时间</th>
                         <th>更新时间</th>
+                        <th>状态</th>
 
 
                         <th class="text-center">操作</th>
@@ -63,6 +64,11 @@
                         <td><%=list[i].noticeId%></td>
                         <td><%=list[i].createTime%></td>
                         <td><%=list[i].updateTime%></td>
+                        <%if(list[i].isShow){%>
+                            <td><a class="btn btn-success" >已显示</a></td>
+                          <%}else{%>
+                            <td><a class="btn btn-danger" >已隐藏</a></td>
+                          <%}%>
                      
                         <td class="text-center">
 

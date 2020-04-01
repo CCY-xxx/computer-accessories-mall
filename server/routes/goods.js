@@ -24,6 +24,9 @@ router.get("/list", function (req,res,next) {
   let pageSize = parseInt(req.param("pageSize"));
   let priceLevel = req.param("priceLevel");
   let sort = req.param("sort");
+  let saleSort = req.param("saleSort");
+  let dateSort = req.param("dateSort");
+  let sortType = req.param("sortType");
   let skip = (page-1)*pageSize;
   var priceGt = '',priceLte = '';
   let params = {};
@@ -43,7 +46,12 @@ router.get("/list", function (req,res,next) {
     console.log(params)
   }
   let goodsModel = Goods.find(params).skip(skip).limit(pageSize)
-  goodsModel.sort({'price':sort});
+  if(sortType=='3'){
+    goodsModel.sort({'createTime':dateSort})
+  }else{
+    sortType==1?goodsModel.sort({'price':sort}):goodsModel.sort({'saleNum':saleSort});
+  }
+  
   goodsModel.exec(function (err,doc) {
       if(err){
           res.json({
@@ -70,6 +78,9 @@ router.get('/search', function (req, res) {
   let pageSize = parseInt(req.param("pageSize"));
   let priceLevel = req.param("priceLevel");
   let sort = req.param("sort");
+  let saleSort = req.param("saleSort");
+  let dateSort = req.param("dateSort");
+  let sortType = req.param("sortType");
   // let skip = (page-1)*pageSize;
   var priceGt = '',priceLte = '';
   let params = {};
@@ -96,7 +107,12 @@ router.get('/search', function (req, res) {
       { title: { $regex: reg } },
       { brand: { $regex: reg } }
   ]},params).limit(limit)
-  goodsModel.sort({'price':sort});
+  if(sortType=='3'){
+    goodsModel.sort({'createTime':dateSort})
+  }else{
+    sortType=='1'?goodsModel.sort({'price':sort}):goodsModel.sort({'saleNum':saleSort});
+  }
+
   goodsModel.exec(function (err,doc) {
     if(err){
         res.json({
@@ -121,7 +137,6 @@ router.get('/search', function (req, res) {
           msg:'无数据',
           result:{
             count:doc.length
-            
         }
         });
       }

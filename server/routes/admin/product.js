@@ -147,8 +147,10 @@ router.post('/doAdd', function (req, res) {
             brand,
             productImage,
             productDec,
-            from
-
+            from,
+            isPush:false,
+            createTime:new Date().Format("yyyy-MM-dd hh:mm:ss"),
+            saleNum:0
         }, function (err, data) {
             if (!err) {
                 res.send("<script>location.href='/admin/product'</script>");
@@ -221,7 +223,10 @@ router.post('/doEdit', function (req, res) {
                 productId,
                 productImage,
                 productDec,
-                from
+                from,
+                // isPush:false,
+                updateTime:new Date().Format("yyyy-MM-dd hh:mm:ss"),
+                // saleNum:0
             };
         } else { /*没有修改图片*/
             var setData = {
@@ -230,7 +235,10 @@ router.post('/doEdit', function (req, res) {
                 brand,
                 productId,
                 productDec,
-                from
+                from,
+                // isPush:false,
+                updateTime:new Date().Format("yyyy-MM-dd hh:mm:ss"),
+                // saleNum:0
             };
             //删除生成的临时文件
             // console.log(productImage)
@@ -248,7 +256,7 @@ router.post('/doEdit', function (req, res) {
         DB.update('products', { "_id": new DB.ObjectID(_id) }, setData, function (err, data) {
 
             if (!err) {
-                res.send("<script>alert('修改商品成功,点击确定跳转到首页');location.href='/admin/product'</script>");
+                res.send("<script>location.href='/admin/product'</script>");
                 // res.redirect('/admin/product');
             }
         })
@@ -274,6 +282,29 @@ router.get('/delete', function (req, res) {
 
     })
 
+})
+//是否显示
+router.get('/isPush',(req,res)=>{
+    var id = req.query.id;
+    var setData={}
+    DB.find('products',{"_id": new DB.ObjectID(id)},(err,data)=>{
+        console.log(data)
+        setData = data[0].isPush? {
+        isPush:false
+      }:{
+        isPush:true
+      }
+      DB.update('products', { "_id": new DB.ObjectID(id) }, setData, function (err, data) {
+
+        if (!err) {
+            // res.send("<script>location.href='/admin/notice'</script>");
+            // res.redirect('/admin/product');alert('修改公告成功,点击确定跳转到公告列表');
+        }
+    })
+    })
+    
+   
+  
 })
 router.get('/load', function (req, res) {
     //获取id
