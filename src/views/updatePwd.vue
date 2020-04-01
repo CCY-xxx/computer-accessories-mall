@@ -67,6 +67,36 @@
       </defs>
     </svg>
     <div class="container">
+         <div class="cart">
+        <div class="page-title-normal">
+          <h2 class="page-title-h2">
+            <span>修改个人资料</span> 
+          </h2>
+        </div>
+        <div class="item-list-wrap">
+          <div class="cart-item">
+            <div>
+             
+                <ul style="text-align:center">
+                  <li>
+                    原密码：
+                    <input type="password" v-model="oldPwd" />
+                  </li>
+                  <li>
+                    新密码：
+                    <input type="password" v-model="newPwd" />
+                  </li>
+
+                  <li>
+                    <br />
+                    <button type="submit" @click="submit" class="btn btn-default">提交</button>
+                  </li>
+                </ul>
+              
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="cart">
         <div class="page-title-normal">
           <h2 class="page-title-h2">

@@ -160,7 +160,16 @@
         </div>
        
       </div>
-
+      <div>
+        评价列表：
+        <ul>
+  <li
+                  v-for="(item,index) in goodInfo.evaluate"
+                  :key="index"
+                >{{item.infoStr}}</li>
+        </ul>
+        
+      </div>
       <div class="order-create">
         <!-- <div class="order-create-pic"><img src="/static/imgs/ok-2.png" alt=""></div> -->
         <div class="order-create-main">

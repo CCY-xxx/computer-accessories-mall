@@ -15,7 +15,19 @@ var produtSchema = new Schema({
   "isPush":Boolean,
   "createTime":String,
   "updateTime":String,
-  "saleNum":Number
+  "saleNum":Number,
+  "evaluate":[
+    {
+      "userName": String,
+      "createTime":String,
+      "infoStr":String,
+      "orther":String,
+      "phone":String
+    }
+  ],
+  "goodEvaluate":Number,
+  "badEvaluate":Number,
+  "isEvaluate":Boolean
 });
 
 module.exports = mongoose.model('Products',produtSchema);

@@ -150,7 +150,10 @@ router.post('/doAdd', function (req, res) {
             from,
             isPush:false,
             createTime:new Date().Format("yyyy-MM-dd hh:mm:ss"),
-            saleNum:0
+            saleNum:0,
+            evaluate:[],
+            goodEvaluate:0,
+            badEvaluate:0,
         }, function (err, data) {
             if (!err) {
                 res.send("<script>location.href='/admin/product'</script>");

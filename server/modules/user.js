@@ -4,11 +4,19 @@ var userSchema = new mongoose.Schema({
   "userId":String,
   "userName":String,
   "userPwd":String,
+  "phone":String,
+  "remark":String,
+  "age":String,
+  "sex":String,
+  "birth":String,
+  "headUrl":String,
   "orderList":[
     {
       "orderId" : String,
       "orderTotal" : Number,
       "addressInfo" : Object,
+      "isEvaluate":Boolean,
+
       "goodsList" : [ 
           {
               "brand" : String,
@@ -21,10 +29,12 @@ var userSchema = new mongoose.Schema({
               "productImage" : String,
               "productNum" : Number,
               "checked" : String,
-              "isPush":Boolean,
-              "createTime":String,
-              "updateTime":String,
-              "saleNum":Number
+              "saleNum":Number,
+              "evaluate":String,
+              "goodEvaluate":Number,
+              "badEvaluate":Number,
+              "isEvaluate":Boolean
+
           } 
       ],
       "orderStatus" : String,
@@ -42,10 +52,10 @@ var userSchema = new mongoose.Schema({
     "productImage" : String,
     "checked":String,
     "productNum":Number,
-    "isPush":Boolean,
-    "createTime":String,
-    "updateTime":String,
-    "saleNum":Number
+    "saleNum":Number,
+    "evaluate":String,
+    "goodEvaluate":Number,
+    "badEvaluate":Number,
     }
   ],
   "addressList":[

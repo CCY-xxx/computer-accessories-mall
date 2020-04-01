@@ -29,13 +29,16 @@
       <div class="item-list-wrap confirm-item-list-wrap">
         <div class="cart-item order-item">
           <div class="cart-item-head">
-            <ul>
+           <ul>
               <li>商品图片</li>
               <li>商品名称</li>
               <li>单价</li>
               <li>数量</li>
               <li>总价</li>
+              <li v-if="status=='3'">评价类型</li>
+
               <li v-if="status=='0'">操作</li>
+              <li v-if="status=='3'">操作</li>
             </ul>
           </div>
           <!-- <ul class="cart-item-list">
@@ -115,6 +118,17 @@
               <div class="cart-tab-3">
                 <div class="item-price-total">{{(item.price*item.productNum)|currency('$')}}</div>
               </div>
+                <div class="cart-tab-3"  v-if="status=='3'">
+                   <a-button v-if="item.goodEvaluate&&item.goodEvaluate==1" type="primary" >好评</a-button>
+                   <a-button v-if="item.badEvaluate&&item.badEvaluate==1" >差评</a-button>
+                   <a-button v-if="!item.badEvaluate&&!item.goodEvaluate" >未评价</a-button>
+              </div>
+                 <div  v-if="status=='3'" class="cart-tab-3">
+                <!-- <div class="item-price-total">{{(item.evaluate)}}</div> -->
+                <!-- <a-input  type="text" v-model="item.evaluate"/> -->
+                   <a-button v-if="item.isEvaluate" >已评价</a-button>
+                <a-button  v-if="!item.isEvaluate" type="primary" @click="showModal(item.productId)">评价</a-button>
+              </div>
               <div class="cart-tab-3" v-if="status=='0'">
                 <div>
                   <button>
@@ -168,7 +182,7 @@
               <span>订单总价:</span>
               <span>{{orderTotal|currency('￥')}}</span>
             </li>
-            <li  v-if="status=='1'">
+            <li  v-if="status!='0'">
               <span></span>
               <button :style="{width:'100px'}" class="btn btn--m btn--red" @click="aginOrder">再来一单</button>
             </li>
@@ -187,6 +201,43 @@
         <a class="btn btn--m btn--red" href="javascript:;" @click="modalConfirm = false">关闭</a>
       </div>
     </Modal>
+       <div>
+      <a-modal
+        title="用户评价"
+        :visible="visible"
+        @ok="handleOk"
+        :confirmLoading="confirmLoading"
+        @cancel="handleCancel"
+      >
+        <!-- <p>{{ModalText}}</p> -->
+        <a-form
+          :form="form"
+          :label-col="{ span: 5 }"
+          :wrapper-col="{ span: 12 }"
+          @submit="handleSubmit"
+        >
+          <a-form-item label="评价内容">
+            <a-input
+              v-decorator="['evaluateStr', { rules: [{ required: true, message: '请输入评价内容!' }] }]"
+            />
+          </a-form-item>
+          <a-form-item label="评价类型">
+            <a-radio-group
+              v-decorator="['goodEvaluate', { rules: [{ required: true, message: '请选择评价类型!' }] }]"
+              @change="onChange"
+            >
+              <a-radio-button value="true">好评</a-radio-button>
+              <a-radio-button value="false">差评</a-radio-button>
+            </a-radio-group>
+          </a-form-item>
+          <!-- <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
+      <a-button type="primary" html-type="submit">
+        Submit
+      </a-button>
+          </a-form-item>-->
+        </a-form>
+      </a-modal>
+    </div>
     <!-- <div>
       <button class="btn" @click="queryOrder">查询订单</button>
     </div> -->
@@ -212,8 +263,16 @@ export default {
       discount: 1,
       tax: 2,
       subTotal: 0,
-      addressInfo:{},
-      modalConfirm: false
+      addressInfo: {},
+      modalConfirm: false,
+      evaluateStr: "",
+      productId: "",
+      goodEvaluate: "",
+      ModalText: "Content of the modal",
+      visible: false,
+      confirmLoading: false,
+      formLayout: "horizontal",
+      form: this.$form.createForm(this, { name: "coordinated" })
     };
   },
   components: {
@@ -226,10 +285,50 @@ export default {
     currency: currency
   },
   mounted() {
-    this.queryOrder();
+    // this.queryOrder();
     this.init();
   },
   methods: {
+      handleSubmit(e) {
+      // e.preventDefault();
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          console.log("Received values of form: ", values);
+
+          this.evaluate(values);
+          this.handleCancel();
+        }
+      });
+    },
+    //     reloadForm(){
+    //        this.form.setFieldsValue({},(values) => {
+    //          console.log(values)
+    //       });
+    // console.log( this.form.setFieldsValue)
+    //     },
+    onChange(e) {
+      console.log(`checked = ${e.target.value}`);
+    },
+    showModal(id) {
+      this.productId = id;
+      this.visible = true;
+      //  this.reloadForm()
+    },
+    async handleOk(e) {
+      this.ModalText = "The modal will be closed after two seconds";
+      this.confirmLoading = true;
+      await this.handleSubmit();
+      this.confirmLoading = false;
+
+      // setTimeout(() => {
+      //   this.visible = false;
+      //   this.confirmLoading = false;
+      // }, 2000);
+    },
+    handleCancel(e) {
+      console.log("Clicked cancel button");
+      this.visible = false;
+    },
     pay() {
       var orderId = this.$route.query.orderId;
       // if (orderStatus == "1") {
@@ -247,18 +346,19 @@ export default {
           location.href = res.result;
         });
     },
-    queryOrder() {
+    queryOrder(status) {
       var orderId = this.$route.query.orderId;
+        if (status == "0") {
       axios.get("/api/users/tradeNo/" + orderId).then(response => {
         var res = response.data;
         console.log(location.href.length);
         if(location.href.length>100){
-   this.$router.push("/order");
-   location.reload()
+        this.$router.push("/order");
+        location.reload()
         }
-               
-        // location.reload()
       });
+      return
+        }
     },
     init() {
       var orderId = this.$route.query.orderId;
@@ -286,6 +386,8 @@ export default {
 
           this.orderTotal =
             this.subTotal + this.shipping - this.discount + this.tax;
+          this.queryOrder(res.result.orderStatus);
+
         });
     },
     uptateTotal() {
@@ -323,6 +425,36 @@ export default {
             this.$router.push("/order");
           }
         });
+    },
+    evaluate(values) {
+      var orderId = this.$route.query.orderId;
+      // if (flag == "add") {
+      //   item.productNum++;
+      // } else if (flag == "minu") {
+      //   if (item.productNum <= 1) {
+      //     return;
+      //   }
+      //   item.productNum--;
+      // }
+      //  this.subTotal = 0;
+      //
+      axios
+        .post("/api/users/evaluate", {
+          orderId,
+          productId: this.productId,
+          evaluate: values.evaluateStr,
+          goodEvaluate: values.goodEvaluate,
+          userName: this.$store.state.nickName
+        })
+        .then(response => {
+          let res = response.data;
+          console.log(res.result);
+        });
+
+      this.init();
+      // setTimeout(() => {
+      //   this.uptateTotal();
+      // }, 1000);
     },
     editCart(flag, item) {
      

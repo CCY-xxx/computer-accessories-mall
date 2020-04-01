@@ -48,6 +48,8 @@
                         <th>公告编号</th>
                         <th>创建时间</th>
                         <th>更新时间</th>
+                        <th>更新人</th>
+                        <th>创建人</th>
                         <th>状态</th>
 
 
@@ -64,6 +66,9 @@
                         <td><%=list[i].noticeId%></td>
                         <td><%=list[i].createTime%></td>
                         <td><%=list[i].updateTime%></td>
+                        <td><%=list[i].updatePerson%></td>
+                        <td><%=list[i].createPerson%></td>
+
                         <%if(list[i].isShow){%>
                             <td><a class="btn btn-success" >已显示</a></td>
                           <%}else{%>

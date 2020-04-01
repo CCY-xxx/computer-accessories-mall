@@ -62,6 +62,7 @@ router.get('/findUser',(req,res)=>{
         });
     })
 })
+//查看用户下的订单
 router.get('/findUserOrder',(req,res)=>{
     var orderId=req.query.orderId;
     var id=req.query._id;
@@ -79,6 +80,31 @@ router.get('/findUserOrder',(req,res)=>{
       
         
     })
+})
+//订单发货功能接口
+router.get('/sendGoods',(req,res)=>{
+    var orderId=req.query.orderId;
+    var id=req.query._id;
+    var orderStatus=req.query.orderStatus;
+    console.log(orderId)
+    console.log(id)
+    console.log(orderStatus)
+    if(orderStatus=='1'){
+                    
+        DB.update('users', { "_id": new DB.ObjectID(id),"orderList.orderId":orderId },  {"orderList.$.orderStatus": '2'}, function (err2, data) {
+          console.log(data)
+          if (!err2) {
+              // res.send("<script>location.href='/admin/notice'</script>");
+              // res.redirect('/admin/product');alert('修改公告成功,点击确定跳转到公告列表');
+            //   res.redirect(`/admin/user/findUser?id=${id}`);
+
+          }
+          console.log(err2)
+             })
+          return
+          }
+          res.send(`<script>alert('订单已发货');location.href='/admin/user/findUser?id=${id}'</script>`);
+
 })
 //删除某一用户信息
 router.get('/delUser',(req,res)=>{

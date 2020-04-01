@@ -9,6 +9,8 @@ const AlipayFormData = require('alipay-sdk/lib/form').default
 var mongoose = require('mongoose');
 var ObjectID = mongoose.Types.ObjectId;
 var User = require('./../modules/user');
+var Goods = require('./../modules/goods');
+
 router.use(function (req, res, next) {
   if (req.cookies.userId) {
     next();
@@ -68,7 +70,13 @@ router.post("/register", function (req, res) {
   let newUser = new User({
     userId,
     userName,
-    userPwd
+    userPwd,
+    phone:'',
+    remark:'',
+    age:'',
+    sex:'',
+    birth:'',
+    headUrl:'',
   })
 
   newUser.save(function (err, doc) {
@@ -771,7 +779,8 @@ router.post("/saveOrder", function (req, res, next) {
         msg: err.message,
         result: ''
       });
-    } else {
+      return
+    } 
       var address = '', goodsList = [];
       //获取当前用户的地址信息
       doc.addressList.forEach((item) => {
@@ -811,19 +820,45 @@ router.post("/saveOrder", function (req, res, next) {
             msg: err.message,
             result: ''
           });
-        } else {
-          res.json({
-            status: "0",
-            msg: '',
-            result: {
-              orderId: order.orderId,
-              orderTotal: order.orderTotal
-            }
-          });
-        }
+          return
+        } 
+        //处理销量问题
+          goodsList.map((item)=>{
+            console.log('pasjjjjjjjjjjmnkkkkkkkkkkkkkkksnaasnaskjn')
+            Goods.findOne({ "productId": item.productId },(errMsg,goodDoc)=>{
+              Goods.update({ "productId": item.productId }, {
+                "saleNum": item.productNum+goodDoc.saleNum,
+              },(err,doc2)=>{
+                if(err){
+                  res.json({
+                    status: "1",
+                    msg:err.message,
+                    result: ''
+                  });
+                  return
+                }
+                console.log("342343")
+                  res.json({
+                    status: "0",
+                    msg: '',
+                    result: {
+                      orderId: order.orderId,
+                      orderTotal: order.orderTotal
+                    }
+                  });
+            
+              })
+            },
+            
+            )
+         
+          })
+    
+      
       });
-    }
+    
   })
+
 });
 //支付宝付款
 router.post("/pay", async (req, res, next) => {
@@ -1085,6 +1120,128 @@ router.post("/orderEdit", function (req, res, next) {
 
 
 });
+//订单评价功能
+router.post("/evaluate", function (req, res, next) {
+  var userId = req.cookies.userId,
+    productId = req.body.productId,
+
+    orderId = req.body.orderId,
+    evaluate = req.body.evaluate,
+    goodEvaluate = req.body.goodEvaluate,
+    userName = req.body.userName;
+// console.log(evaluate)
+// console.log(goodEvaluate)
+// console.log(productId)
+        var good=0
+        var bad=0
+  User.find({ "userId": userId }, (err, doc) => {
+    if (err) {
+      res.json({
+        status: '1'
+      })
+    } else {
+      doc[0].orderList.forEach((doc2) => {
+        if (doc2.orderId == orderId) {
+      
+          doc2.goodsList.forEach((good) => {
+         
+            if (good.productId == productId) {
+              console.log(good)
+              good.evaluate = evaluate
+              good.isEvaluate=true
+              if(goodEvaluate=='true'){
+                good.goodEvaluate = 1
+              }else{
+                good.badEvaluate = 1
+              }
+            
+            }
+          })
+        }
+      })
+      doc[0].save((err, doc3) => {
+        if (err) {
+          res.json({
+            status: '1',
+            msg: err
+          })
+
+        } else {
+
+          Goods.findOne({ "productId": productId },(errMsg,goodDoc)=>{
+            if (errMsg) {
+              res.json({
+                status: "1000",
+                msg: errMsg.message
+              })
+            } else {
+              console.log("goodDoc:" + goodDoc);
+              if (goodDoc) {
+                let doc = {
+                  "userName":userName,
+                  "createTime":new Date().Format("yyyy-MM-dd hh:mm:ss"),
+                  "infoStr":evaluate,
+                  "orther":'',
+                  "phone":''
+                }
+                goodDoc.evaluate.push(doc)
+                goodDoc.save(function (err5, doc5) {
+                  if (err5) {
+                    res.json({
+                      status: "16666",
+                      msg: err5.message
+                    })
+                    return
+                  }
+                  console.log(goodEvaluate)
+
+                  if(goodEvaluate=='true'){
+                    // good.goodEvaluate = 1
+                    good=1
+                  }else{
+                    // good.badEvaluate = 1
+                     bad=1
+                  }
+                  Goods.update({ "productId": productId }, {
+                    "goodEvaluate": parseInt(goodDoc.goodEvaluate+good),
+                    "badEvaluate": parseInt(goodDoc.badEvaluate+bad),
+                  },(err,doc2)=>{
+                    if(err){
+                      res.json({
+                        status: "1",
+                        msg:err.message,
+                        result: ''
+                      });
+                      return
+                    }
+                    console.log("342343")
+                    res.json({
+                      status: '0',
+                      result: doc3
+                    })
+                
+                
+                  })
+                })
+              }
+            }
+ 
+       
+          })
+
+          // res.json({
+          //   status: '0',
+          //   result: doc3
+          // })
+        }
+      })
+    }
+
+
+  })
+
+
+});
 
 //删除订单商品
 router.post("/delProduct", function (req, res, next) {
@@ -1154,7 +1311,28 @@ router.post("/uptateTotal", function (req, res, next) {
     }
   })
 });
-
+//用户更新订单状态(已收货)
+router.post("/uptateStatus", function (req, res, next) {
+  var userId = req.cookies.userId,
+    orderId = req.body.orderId;
+  User.update({ "userId": userId, "orderList.orderId": orderId }, {
+    "orderList.$.orderStatus": '3' //已收货
+  }, function (err, doc) {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message,
+        result: ''
+      });
+    } else {
+      res.json({
+        status: '0',
+        msg: '',
+        result: 'suc'
+      });
+    }
+  })
+});
 //2019-10-17 20:04:41搞定此功能，费尽九牛二虎之力将此功能实现
 ///aginOrder1 完善前的
 //再来一单接口：开发中：订单号以及订单创建时间改变并覆盖原订单（原本想实现增加新订单而不会覆盖原订单，原订单还在）

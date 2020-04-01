@@ -103,7 +103,7 @@
                 <div class="cart-tab-3">
                   <div
                     class="item-price-total"
-                  >{{item.orderStatus==1?'已付款':'未付款'}}</div>
+                  >{{orderStatus[item.orderStatus]}}</div>
                 </div>
                 <div class="cart-tab-3">
                   <div class="cart-item-opration">
@@ -115,8 +115,12 @@
                     &nbsp; &nbsp; -->
                   
                     <a-button @click="toDetail(item.orderId)">查看</a-button>
+                    <a-button
+                    v-if="item.orderStatus=='2'"
+                      @click="updateStatus(item.orderId)"
+                    >确认收货</a-button>
                     <a-button  v-if="item.orderStatus =='0'" @click="pay(item)">支付</a-button>
-                    <a-button v-if="item.orderStatus =='1'" @click="aginOrder(item)">再来一单</a-button>
+                    <a-button v-if="item.orderStatus !='0'" @click="aginOrder(item)">再来一单</a-button>
                       <a-button type='danger' @click="delOrderConfirm(item)">
                       <a-icon type="delete" />
                       <!-- <a-icon type="right" /> -->
@@ -188,7 +192,13 @@ export default {
       orderList: [],
       delItem: {},
       modalConfirm: false,
-      html:''
+      html:'',
+      orderStatus:{
+        '0':'未付款',
+        '1':'已付款',
+        '2':'待收货',
+        '3':'已收货',
+      }
     };
   },
   mounted() {
@@ -199,6 +209,16 @@ export default {
       axios.get("/api/users/orderList").then(response => {
         let res = response.data;
         this.orderList = res.result;
+        console.log(res.result);
+      });
+    },
+      updateStatus(orderId){
+        axios.post("/api/users/uptateStatus", {
+          orderId
+        }).then(response => {
+        let res = response.data;
+         this.$message.success('已确认收货');
+            this.init();
         console.log(res.result);
       });
     },

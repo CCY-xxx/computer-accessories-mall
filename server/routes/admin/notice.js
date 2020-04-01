@@ -104,17 +104,18 @@ router.post('/editNotice', function (req, res) {
         //获取提交的数据以及图片上传成功返回的图片信息
 
         //console.log(fields);
-        console.log(files);
-        console.log(fields);
+    //     console.log(files);
+    //     console.log(fields);
+    //    console.log(req.session.userinfo)
         var info = fields.info[0];
         // var userId = fields.userId[0];
         // var userPwd = fields.userPwd[0];
         var _id = fields._id[0]; 
         // var noticeId = fields.noticeId[0]; 
             var setData = {
-               info,
-            //    noticeId,
-               updateTime:new Date().Format("yyyy-MM-dd hh:mm:ss")
+            info,
+            updatePerson:req.session.userinfo.username,
+            updateTime:new Date().Format("yyyy-MM-dd hh:mm:ss")
             };
          
         
@@ -208,7 +209,8 @@ router.post("/addNotice", function (req, res) {
                 info,
                 noticeId,
                 isShow:true,
-                createTime:new Date().Format("yyyy-MM-dd hh:mm:ss")
+                createTime:new Date().Format("yyyy-MM-dd hh:mm:ss"),
+                createPerson:req.session.userinfo.username
             };
            
             // var reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
