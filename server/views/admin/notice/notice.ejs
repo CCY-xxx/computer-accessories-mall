@@ -1,9 +1,5 @@
 <%- include ../public/header.ejs%>
-<script type="text/javascript">
-    $('#myModal').on('shown.bs.modal', function () {
-          $('#myInput').focus()
-        })
-    </script>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-2">
@@ -13,9 +9,9 @@
         </div>
         <div class="col-sm-10">
             <ol class="breadcrumb">
-                <li class="active">商品管理
+                <li class="active">公告管理
                 </li>
-                <li class="active">商品列表
+                <li class="active">公告列表
                 </li>
             </ol>
             <div class="panel panel-default">
@@ -23,103 +19,89 @@
                     搜索
                 </div>
                 <div class="panel-body">
-                    <form role="form" action="/admin/product/search"  class="form-inline" method="post">
+                    <form role="form" action="/admin/notice/noticeSearch"  class="form-inline" method="post">
                         <div class="form-group">
-                            <label for="name">名称</label>
+                            <label for="name">公告关键字：</label>
                             <input type="text" name="title" class="form-control" id="name" placeholder="请输入名称">
                         </div>
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-default">开始搜索</button>
-                        <input class="btn btn-default" type="reset" value="重置" onclick="location.href='/admin/product'" />
-
+                            <button type="submit" class="btn btn-primary">开始搜索</button>
                         </div>
+                        <input class="btn btn-default" type="reset" value="重置" onclick="location.href='/admin/notice/notice'" />
+                        <input class="btn btn-default" type="reset" value="清空公告回收站" onclick="location.href='/admin/notice/clearNoticeReturnSta'" />
                     </form>
                 </div>
             </div>
+            <!-- <span class=" btn-primary" style="position: absolute;top:20px;left:450px" id="msgId" ></span> -->
             <div style="position: absolute;top:20px;left:450px;opacity: 0;" id="msgId"  class="alert alert-success" role="alert"></div>
-
             <!--
                 列表展示
             -->
             <div class="table-responsive">
-            <!-- <img src="/upload/nature1.jpg" alt="qq"> -->
-                <table class="table table-striped ">
+                
+                <table class="table table-striped " style="word-break:break-all; word-wrap:break-all;">
                     <thead>
                     <tr>
-                        <th>编号</th>
-                        <th>图标</th>
-                        <th>名称</th>
-                        <th>价格</th>
-                        <th>分类</th>
-                        <th>状态</th>
-                        <th>销量</th>
-                        <th>货存</th>
+                        <th>序号</th>
+                       
+                        <th>公告内容</th>
+                        <th>公告编号</th>
                         <th>创建时间</th>
-                        
+                        <th>更新时间</th>
+                        <th>更新人</th>
+                        <th>创建人</th>
+                        <th>状态</th>
+
+
                         <th class="text-center">操作</th>
                     </tr>
                     </thead>
                     <tbody>
 
                 <% for(var i=0;i<list.length;i++){%>
-              
-                  
-                <tr>
-                    <td><%=list[i].productId%></td>
-                    <td><img  width="100" src="/<%=list[i].productImage%>" alt=""/></td>
-                    <td><%=list[i].title%></td>
-                    <td><%=list[i].price%></td>
-                    <td><%=list[i].brand%></td>
-                    <%if(list[i].isPush){%>
-                        <td><a class="btn btn-success" >已推送</a></td>
-                      <%}else{%>
-                        <td><a class="btn btn-danger" >未推送</a></td>
-                      <%}%>
-                    <td><%=list[i].saleNum%></td>
-                    <td>
-                     
-                      <%if(list[i].overstock<100){%>
-                        <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="货存预警">
-                          <span class="glyphicon glyphicon-bell"> <%=list[i].overstock%></span>
-                        </button>
-                        <!-- <a class="btn btn-danger" ></a> -->
-                      <%}else{%>
-                        <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="货存状态良好">
-                          <span class="glyphicon glyphicon-ok-sign"> <%=list[i].overstock%></span>
-                        </button>
-                      <%}%>
-                    </td>
-                    <td><%=list[i].createTime%></td>
-                    
-                    <td class="text-center">
-                      <%if(!list[i].isDelete){%>
-                      <span>
-                        <a href="/admin/product/load?id=<%=list[i]._id%>" class="btn btn-success">下载图片</a>
-                        <%if(list[i].isPush){%>
-                            <a href="/admin/product/isPush?id=<%=list[i]._id%>" class="btn btn-danger" ><span onclick="hide()">取消推送</span></a>
+					 <tr>
+                        <td><%=i+1%></td>
+
+                        <td style="word-break:break-all; word-wrap:break-all;"><%=list[i].info%></td>
+                        <td><%=list[i].noticeId%></td>
+                        <td><%=list[i].createTime%></td>
+                        <td><%=list[i].updateTime%></td>
+                        <td><%=list[i].updatePerson%></td>
+                        <td><%=list[i].createPerson%></td>
+
+                        <%if(list[i].isShow){%>
+                            <td><a class="btn btn-success" >已显示</a></td>
                           <%}else{%>
-                            <a href="/admin/product/isPush?id=<%=list[i]._id%>" class="btn btn-danger" ><span onclick="show()">推送</span></a>
+                            <td><a class="btn btn-danger" >已隐藏</a></td>
                           <%}%>
-                        <a href="/admin/product/edit?id=<%=list[i]._id%>" class="btn btn-success">修改</a>
-                        <%}%>
-                      </span>
+                     
+                        <td class="text-center">
+
+                            <%if(!list[i].isDelete){%>
+                                <a href="/admin/notice/findNotice?id=<%=list[i]._id%>" class="btn btn-success">编辑查看</a>
+                                <a href="/admin/notice/delNotice?id=<%=list[i]._id%>" class="btn btn-danger" onclick="del()">删除</a>
+                           
+                                <%if(list[i].isShow){%>
+                                    <a href="/admin/notice/isShow?id=<%=list[i]._id%>" class="btn btn-danger" ><span onclick="hide()">隐藏</span></a>
+                                  <%}else{%>
+                                    <a href="/admin/notice/isShow?id=<%=list[i]._id%>" class="btn btn-danger" ><span onclick="show()">显示</span></a>
+                                  <%}%>
+    
+                              <%}else{%>
+                                <a href="/admin/notice/delNotice?id=<%=list[i]._id%>" class="btn btn-danger" onclick="del()">彻底删除</a> 
+
+                              <a href="/admin/notice/returnNotice?id=<%=list[i]._id%>" class="btn btn-danger" onclick="returnNotice()">撤回</a>
+                              <%}%>
                         
-                        <!-- <a href="/admin/product/delete?id=<%=list[i]._id%>" class="btn btn-danger">删除</a>  -->
-                         <%if(list[i].isDelete){%>
-                          <a class="btn btn-danger" disabled>已删除</a>
-                            <%}else{%>
-                              <a href="/admin/product/falseDelete?id=<%=list[i]._id%>" class="btn btn-danger" onclick="del()">删除</a>
-                            <%}%>
-                      
-                        
-                    </td>
-                </tr>
-                <%}%>
-                   
+                             
+                       </td>
+                    </tr>
+                    <%}%>
+
                     </tbody>
                 </table>
-                <div >
+                <div>
                   <ul style="display: flex;justify-content: center;" class="pagination pagination-centered">
                     <!--处理数字显示个数-->
                      <% var prevNum = 6; var nextNum=6;%>
@@ -198,51 +180,58 @@
 </div>
 
 
- 
-
-
 </body>
 </html>
 <script>
-    function hideMsg() {
+     function hideMsg() {
 　　　　　　var msg = document.getElementById("msgId");
-           // msg.style.display='none'
-          
-          
-           msg.style.opacity='0'
-           msg.style.transition='opacity 2s'
-           //   msg.style.display='none'
+            // msg.style.display='none'
+           
+           
+            msg.style.opacity='0'
+            msg.style.transition='opacity 2s'
+            //   msg.style.display='none'
 // 　　　　　　msg.innerHTML = "";
-           setTimeout(' location.reload()', 1000)
-       }
+            setTimeout(' location.reload()', 1000)
+        }
 function hide(){
-   
-   　　var msg = document.getElementById("msgId");
-   console.log(msg)
-   msg.innerHTML = "已取消推送";
-   // msg.style.display='block'
-   msg.style.opacity='1'
-   msg.style.transition='opacity 2s'
-    setTimeout("hideMsg()", 2000)
+    
+    　　var msg = document.getElementById("msgId");
+    console.log(msg)
+    msg.innerHTML = "此条公告已隐藏";
+    // msg.style.display='block'
+    msg.style.opacity='1'
+    msg.style.transition='opacity 2s'
+     setTimeout("hideMsg()", 2000)
 }
 function show(){
-   　　var msg = document.getElementById("msgId");
-   console.log(msg)
-   msg.innerHTML = "已推送";
-   // msg.style.display='block'
-   msg.style.opacity='1'
-   msg.style.transition='opacity 2s'
+    　　var msg = document.getElementById("msgId");
+    console.log(msg)
+    msg.innerHTML = "此条公告已显示";
+    // msg.style.display='block'
+    msg.style.opacity='1'
+    msg.style.transition='opacity 2s'
 
-    setTimeout("hideMsg()",2000)
+     setTimeout("hideMsg()",2000)
+}
+function returnNotice(){
+    　　var msg = document.getElementById("msgId");
+    console.log(msg)
+    msg.innerHTML = "公告已撤回";
+    // msg.style.display='block'
+    msg.style.opacity='1'
+    msg.style.transition='opacity 1s'
+
+    setTimeout(' location.reload()', 1000)
 }
 function del(){
-   　　var msg = document.getElementById("msgId");
-   console.log(msg)
-   msg.innerHTML = "删除成功,请到回收站找回";
-   // msg.style.display='block'
-   msg.style.opacity='1'
-   msg.style.transition='opacity 1s'
+    　　var msg = document.getElementById("msgId");
+    console.log(msg)
+    msg.innerHTML = "配件已彻底删除";
+    // msg.style.display='block'
+    msg.style.opacity='1'
+    msg.style.transition='opacity 1s'
 
-   setTimeout(' location.reload()', 1000)
+    setTimeout(' location.reload()', 1000)
 }
 </script>

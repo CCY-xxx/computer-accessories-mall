@@ -9,6 +9,7 @@ var noticeSchema = new Schema({
     "createTime":String,
     "updateTime":String,
     "other":String,
+    "isDelete":Boolean,
     "isShow":Boolean
 });
 

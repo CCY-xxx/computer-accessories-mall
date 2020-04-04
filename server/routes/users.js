@@ -77,6 +77,7 @@ router.post("/register", function (req, res) {
     sex:'',
     birth:'',
     headUrl:'',
+    nickName:''
   })
 
   newUser.save(function (err, doc) {
@@ -96,6 +97,7 @@ router.post("/register", function (req, res) {
           path: '/',
           maxAge: 1000 * 60 * 60
         });
+    
         // req.session.user = doc;
         res.json({
           status: '0',
@@ -144,6 +146,10 @@ router.post("/login", function (req, res, next) {
           path: '/',
           maxAge: 1000 * 60 * 60
         });
+        res.cookie("nickName", doc.nickName||'', {
+          path: '/',
+          maxAge: 1000 * 60 * 60
+        });
         //req.session.user = doc;
         res.json({
           status: '0',
@@ -161,6 +167,7 @@ router.post('/updatePwd', (req, res) => {
 
   var oldPwd = req.body.oldPwd
   var newPwd = req.body.newPwd
+  console.log(oldPwd)
   var param = {
     userPwd: oldPwd
   }
@@ -192,10 +199,97 @@ router.post('/updatePwd', (req, res) => {
 
 
 })
+//查看个人资料
+router.get('/findUserInfo', (req, res) => {
+
+  // var oldPwd = req.body.oldPwd
+  // var newPwd = req.body.newPwd
+  var param = {
+    userId: req.cookies.userId
+  }
+  User.findOne(param, (err, data) => {
+    // console.log(err)
+    console.log(data)
+    if (data == null) {
+      res.json({
+        status: "1",
+        msg: 'error'
+      });
+    } else {
+      res.json({
+        status: "0",
+        result:data
+      });
+    }
+  })
+
+
+})
+//修改个人资料
+router.post('/updateUserInfo', (req, res) => {
+
+  var userId = req.cookies.userId,
+  phone = req.body.phone,
+  age = req.body.age,
+  sex = req.body.sex,
+  birth = req.body.birth,
+  headUrl = req.body.headUrl,
+  birth = req.body.birth,
+  remark = req.body.remark;
+  nickName = req.body.nickName;
+
+  var param = {
+    userId: req.cookies.userId
+  }
+  User.findOne(param, (err, data) => {
+    // console.log(err)
+    console.log(data)
+    if (data == null) {
+      res.json({
+        status: "1",
+        msg: 'error'
+      });
+    } else {
+     let setData={
+      phone,
+      age,
+      sex,
+      birth,
+      headUrl,
+      remark,
+      nickName
+     }
+      User.updateOne(param, setData, (err2, doc) => {
+        console.log('uuuu')
+        if (err2) {
+          res.json({
+            status: "1",
+            msg: err2
+          });
+        } else {
+          res.cookie("nickName", nickName, {
+            path: '/',
+            maxAge: 1000 * 60 * 60
+          });
+          res.json({
+            status: '0',
+            result: 'suc'
+          })
+        }
+      });
+    }
+  })
+
+
+})
 
 //登出接口
 router.post("/logout", function (req, res, next) {
   res.cookie("userId", "", {
+    path: "/",
+    maxAge: -1
+  });
+  res.cookie("nickName", "", {
     path: "/",
     maxAge: -1
   });
@@ -779,6 +873,7 @@ router.post("/saveOrder", function (req, res, next) {
         msg: err.message,
         result: ''
       });
+
       return
     } 
       var address = '', goodsList = [];
@@ -817,17 +912,18 @@ router.post("/saveOrder", function (req, res, next) {
         if (err1) {
           res.json({
             status: "1",
-            msg: err.message,
+            msg: err1.message,
             result: ''
           });
           return
         } 
         //处理销量问题
           goodsList.map((item)=>{
-            console.log('pasjjjjjjjjjjmnkkkkkkkkkkkkkkksnaasnaskjn')
             Goods.findOne({ "productId": item.productId },(errMsg,goodDoc)=>{
+              console.log(goodDoc)
               Goods.update({ "productId": item.productId }, {
                 "saleNum": item.productNum+goodDoc.saleNum,
+                "overstock": goodDoc.overstock-item.productNum,
               },(err,doc2)=>{
                 if(err){
                   res.json({
@@ -1147,7 +1243,7 @@ router.post("/evaluate", function (req, res, next) {
          
             if (good.productId == productId) {
               console.log(good)
-              good.evaluate = evaluate
+              // good.evaluate.infoStr = evaluate//这样做有问题，无法将数据存档
               good.isEvaluate=true
               if(goodEvaluate=='true'){
                 good.goodEvaluate = 1
@@ -1181,7 +1277,7 @@ router.post("/evaluate", function (req, res, next) {
                   "userName":userName,
                   "createTime":new Date().Format("yyyy-MM-dd hh:mm:ss"),
                   "infoStr":evaluate,
-                  "orther":'',
+                  "orther":goodEvaluate=='true'?'1':'2',
                   "phone":''
                 }
                 goodDoc.evaluate.push(doc)

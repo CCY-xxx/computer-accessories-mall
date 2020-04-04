@@ -2,7 +2,7 @@
   <div>
     <nav-header></nav-header>
     <nav-bread>
-      <span>订单详情</span>
+      <span style="fontSize:25px">订单详情</span>
     </nav-bread>
     <div class="container">
       <div class="page-title-normal">
@@ -444,7 +444,7 @@ export default {
           productId: this.productId,
           evaluate: values.evaluateStr,
           goodEvaluate: values.goodEvaluate,
-          userName: this.$store.state.nickName
+          userName: this.$store.state.userName
         })
         .then(response => {
           let res = response.data;

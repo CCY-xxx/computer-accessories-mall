@@ -10,6 +10,7 @@ import infiniteScroll from  'vue-infinite-scroll'
 import {currency} from './util/currency'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
+import Cookies from 'js-cookie'
 
 import './assets/css/base.css'
 import './assets/css/checkout.css'
@@ -28,17 +29,29 @@ Vue.config.productionTip = false;
 
 const store = new Vuex.Store({
   state: {
-    nickName:'',
-    cartCount:0
+    cartCount:0,
+    // age: "",
+    // birth: "",
+    // phone: "",
+    // remark: "",
+    // sex: "",
+    // headUrl: "",
+    // userId: "",
+    userName: "",
+    nickName: "",
     // orderCount:0
   },
   mutations: {
     //更新用户信息
-    updateUserInfo(state, nickName) {
-      state.nickName = nickName;
+    updateUserInfo(state, userName) {
+      state.userName = userName;
+      state.nickName = Cookies.get('nickName');;
     },
     updateCartCount(state,cartCount){
       state.cartCount += cartCount;
+    },
+    updateNickName(state,nickName){
+      state.nickName = nickName;
     },
     // updateOrderCount(state,orderCount){//多余
     //   state.orderCount += orderCount;
@@ -53,6 +66,7 @@ new Vue({
   mounted(){
     this.checkLogin();
     this.getCartCount();
+    // this.initUserInfo()
     // this.getOrderCount();
   },
   methods:{
@@ -74,6 +88,22 @@ new Vue({
         if(res.status=="0"){
           this.$store.commit("updateCartCount",res.result);
         }
+      });
+    },
+    initUserInfo() {
+      axios.get("/api/users/findUserInfo").then(response => {
+        console.log(response);
+        this.userInfo = response.data.result;
+        this.birth = this.userInfo.birth;
+        this.age = this.userInfo.age;
+        this.phone = this.userInfo.phone;
+        this.sex = this.userInfo.sex;
+        this.remark = this.userInfo.remark;
+        this.headUrl = this.userInfo.headUrl;
+        this.userId = this.userInfo.userId;
+        this.userName = this.userInfo.userName;
+        this.nickName = this.userInfo.nickName;
+        console.log(this.userInfo);
       });
     },
     // getOrderCount(){

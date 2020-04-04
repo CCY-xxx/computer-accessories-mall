@@ -87,6 +87,14 @@ exports.update = function(collectionname, json1, json2, callback) {
 };
 
 //删除数据库数据
+exports.remove = function(collectionname, json, callback) {
+  __connectDb(function(db) {
+    db.collection(collectionname).remove(json, function(error, data) {
+      callback(error, data);
+    });
+  });
+};
+//删除数据库数据
 exports.deleteOne = function(collectionname, json, callback) {
   __connectDb(function(db) {
     db.collection(collectionname).deleteOne(json, function(error, data) {
@@ -94,3 +102,5 @@ exports.deleteOne = function(collectionname, json, callback) {
     });
   });
 };
+
+

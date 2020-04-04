@@ -2,7 +2,7 @@
   <div>
     <!-- <nav-header></nav-header> -->
     <nav-bread>
-      <span>商品详情</span>
+      <span style="fontSize:25px">配件详情</span>
     </nav-bread>
     <svg
       style="position: absolute; width: 0; height: 0; overflow: hidden;"
@@ -70,12 +70,12 @@
       <div class="cart">
         <div class="page-title-normal">
           <h2 class="page-title-h2">
-            <span>商品详情</span>
+            <span>配件详情</span>
           </h2>
         </div>
         <div
           class="item-list-wrap"
-          :style="{display:'flex',width:'800px',marginLeft:'200px', justifyContent: 'space-around'}"
+         
         >
           <div class="cart-item">
             <!-- <img
@@ -132,44 +132,161 @@
               </div>
             </div>
           </div>
-          <div class="goodInfo" :style="{width:'500px'}">
+       <div style="marginLeft:100px;display:flex">
+            <div class="goodInfo1">
             <div>
-              商品名称：
+             <label for="">配件名称：</label> 
               <span>{{goodInfo.title}}</span>
             </div>
             <div>
-              商品分类：
+              <label for="">配件分类：</label> 
               <span>{{goodInfo.brand}}</span>
             </div>
             <div>
-              商品价格：
+              <label for="">配件价格：</label> 
               <span>{{goodInfo.price | currency('￥')}}</span>
             </div>
             <div>
-              商品描述：
+              <label for="">配件描述：</label> 
               <span>{{goodInfo.productDec}}</span>
             </div>
             <div>
-              商品发货地址：
+              <label for="">配件发货地址：</label> 
               <span>{{goodInfo.from}}</span>
             </div>
- <div class="btn-area addCart">
-          <a href="javascript:;" class="btn btn-ms" @click="addCart(goodInfo._id)">加入购物车</a>
-        </div>
+            <!-- <div class="btn-area addCart">
+              <a href="javascript:;" class="btn btn-ms" @click="addCart(goodInfo._id)">加入购物车</a>
+            </div> -->
           </div>
+          <div class="goodInfo2">
+            <div>
+             <label for="">配件销量：</label> 
+              <span>{{goodInfo.saleNum}}</span>
+            </div>
+            <div>
+              <label for="">配件货存：</label> 
+              <span>{{goodInfo.overstock}}</span>
+            </div>
+            <div>
+              <label for="">配件上架时间：</label> 
+              <span>{{goodInfo.createTime}}</span>
+            </div>
+            <div>
+              <a-button href="javascript:;" type="primary" @click="addCart(goodInfo._id)"><a-icon type="shopping-cart" />加入购物车</a-button>
+            </div>
+          </div>
+       </div>
         </div>
-       
       </div>
-      <div>
-        评价列表：
-        <ul>
-  <li
-                  v-for="(item,index) in goodInfo.evaluate"
-                  :key="index"
-                >{{item.infoStr}}</li>
-        </ul>
+      <div style="marginLeft:500px;marginBottom:10px">
+        <a-button type="primary">
+          <a-icon type="like" />好评
+          <span>{{goodInfo.goodEvaluate}}</span>
+        </a-button>
+        <a-button>
+          <a-icon type="dislike" />差评
+          <span>{{goodInfo.badEvaluate}}</span>
+        </a-button>
+      </div>
+      <a-collapse defaultActiveKey="1" :bordered="false">
+        <!-- <a-button type="primary" style="position:absolute;left:250px">{{goodInfo.evaluate.length}}条评价</a-button> -->
+
+        <template v-slot:expandIcon="props">
+          <a-icon type="caret-right" :rotate="props.isActive ? 90 : 0" />
+        </template>
+        <a-collapse-panel :header="goodInfo.evaluate.length +'条评价'" key="1">
+          <!-- <div
+        v-for="(item,index) in goodInfo.evaluate"
+        class="comment"
+        style="background:white"
+        :key="index"
+      >
+          -->
+          <!-- <a-comment>
+          <template slot="actions">
+            <span key="comment-basic-like">
+              <a-tooltip title="Like">
+                <a-icon
+                  type="like"
+                  :theme="action === 'liked' ? 'filled' : 'outlined'"
+                  @click="like"
+                />
+              </a-tooltip>
+              <span style="padding-left: '8px';cursor: 'auto'">{{likes}}</span>
+            </span>
+            <span key="comment-basic-dislike">
+              <a-tooltip title="Dislike">
+                <a-icon
+                  type="dislike"
+                  :theme="action === 'disliked' ? 'filled' : 'outlined'"
+                  @click="dislike"
+                />
+              </a-tooltip>
+              <span style="padding-left: '8px';cursor: 'auto'">{{dislikes}}</span>
+            </span>
+            <span key="comment-basic-reply-to">评论</span>
+          </template>
+          <a slot="author">{{item.userName}}</a>
+          <a-avatar
+            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+            alt="Han Solo"
+            slot="avatar"
+          />
+          <p slot="content">{{ item.infoStr}}</p>
+          <a-tooltip slot="datetime" :title="item.createTime">
         
-      </div>
+            <span>{{item.createTime}}</span>
+          </a-tooltip>
+          </a-comment>-->
+          <a-list
+            style="background:#d2c5c5"
+            class="comment-list"
+            :header="`评价列表`"
+            itemLayout="horizontal"
+            :dataSource="goodInfo.evaluate"
+          >
+            <a-list-item style="background:#697b96" slot="renderItem" slot-scope="item,index">
+              <a-comment
+                :author="item.userName"
+                avatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+              >
+                <template slot="actions">
+                  <span key="comment-basic-like" v-if="!upFlag">
+                    <a-tooltip title="Like">
+                      <a-icon
+                        type="like"
+                        :theme="action === 'liked' ? 'filled' : 'outlined'"
+                        @click="like"
+                      />
+                    </a-tooltip>
+                    <span style="padding-left: '8px';cursor: 'auto'">{{likes}}</span>
+                  </span>
+                  <span key="comment-basic-dislike" v-if="!upFlag">
+                    <a-tooltip title="Dislike">
+                      <a-icon
+                        type="dislike"
+                        :theme="action === 'disliked' ? 'filled' : 'outlined'"
+                        @click="dislike"
+                      />
+                    </a-tooltip>
+                    <span style="padding-left: '8px';cursor: 'auto'">{{dislikes}}</span>
+                  </span>
+                  <span>评论</span>
+                </template> 
+                <p slot="content">{{item.infoStr}}</p>
+                  <a-button v-if="item.orther=='1'" type="primary">
+                    <a-icon type="like" />好评
+                  </a-button>
+                <a-tooltip slot="datetime" :title="item.createTime">
+                  <span>{{item.createTime}}</span>
+                </a-tooltip>
+              </a-comment>
+            </a-list-item>
+          </a-list>
+          <a-divider></a-divider>
+        </a-collapse-panel>
+      </a-collapse>
+
       <div class="order-create">
         <!-- <div class="order-create-pic"><img src="/static/imgs/ok-2.png" alt=""></div> -->
         <div class="order-create-main">
@@ -178,7 +295,7 @@
               <router-link class="btn btn--m" to="/cart">我的购物车</router-link>
             </div>
             <div class="btn-r-wrap">
-              <router-link class="btn btn--m" to="/">商品列表</router-link>
+              <router-link class="btn btn--m" to="/">配件列表</router-link>
             </div>
           </div>
         </div>
@@ -197,11 +314,13 @@ import NavBread from "./../components/NavBread";
 // import $ from "jquery";
 import imgList from "../assets/imgList.js";
 import Modal from "./../components/Modal";
+import moment from "moment";
 import { currency } from "./../util/currency";
 import axios from "axios";
 export default {
   data() {
     return {
+      // upFlag:false,
       //   item: {},
       mdShow: false,
       //   imgurl: "",
@@ -217,10 +336,15 @@ export default {
       top: 0, //marks下移位置
       leftLgImg: 0, //大图lgImg移动的位置
       topLgImg: 0, //大图lgImg移动的位置
-      selectIndex: 0
+      selectIndex: 0,
+      likes: 0,
+      dislikes: 0,
+      action: null,
+      moment
     };
   },
   created() {
+    this.goodInfo = this.$route.params.goodInfo;
     this.goodInfo = this.$route.params.goodInfo;
     this.mdImgUrl = `/static/${this.goodInfo.productImage}`;
     this.lgImgUrl = `/static/${this.goodInfo.productImage}`;
@@ -254,6 +378,20 @@ export default {
 
   //   },
   methods: {
+    // upFlagShow(index){
+    //   // console.log(index)
+    //   this.upFlag=!this.upFlag
+    // },
+    like(index) {
+      this.likes = 1;
+      this.dislikes = 0;
+      this.action = "liked";
+    },
+    dislike(index) {
+      this.likes = 0;
+      this.dislikes = 1;
+      this.action = "disliked";
+    },
     addCart(_id) {
       var arr = document.cookie.split(";");
       var arr1 = "";
@@ -361,122 +499,167 @@ export default {
 };
 </script>
  <style lang="less" scoped>
-.goodInfo {
+.goodInfo1 {
+  width: 500px;
+  padding: 20px;
+  background: blanchedalmond;
   font-size: 20px;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
   div {
-    margin-bottom: 20px;
+ 
+    flex: 1;
+   
+    label{
+      // flex: 2;
+      color: #7f7b98;;
+      font-weight: 700;
+    }
+    span{
+      // flex: 2;
+      color: #36866b;
+    }
+  }
+}
+.goodInfo2 {
+  width: 500px;
+  padding: 20px;
+  background: blanchedalmond;
+  font-size: 20px;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  div {
+ 
+    flex: 1;
+   
+    label{
+      // flex: 2;
+      color: #7f7b98;;
+      font-weight: 700;
+    }
+    span{
+      // flex: 2;
+      color: #36866b;
+    }
   }
 }
 .addCart {
-//   margin-left: 800px;
-//   margin-top: -30px;
+  //   margin-left: 800px;
+  //   margin-top: -30px;
 }
 
-    .content{
-        width:1200px;
-        margin:0 auto;
-    }
-    .content>.product{
-        display: flex;
-        justify-content: space-between;
-    }
-    /* 左侧大小图样式 */
-    .productLeft{
-        width:450px;
-        position: relative;
-    }
-    /* 左侧中图 */
-    .mdImg,.mdImg>img{
-        width:350px;
-        height:350px;
-    }
-    /*遮罩层superMarks */
-    .superMarks{
-        width:350px;
-        height:350px;
-        background-color:rgba(220, 220, 220, 0);
-        position:absolute;
-        top:0px;
-        left:0px;
-    }
-    /* 遮罩层 */
-    .marks{
-        width:200px;
-        height:200px;
-        position:absolute;
-        background-color:rgba(220, 220, 220, 0.5);
-        /*top:0px;  //内联设置了动态的top，left
+.content {
+  width: 1200px;
+  margin: 0 auto;
+ background:#96b5da;
+}
+.content > .product {
+  display: flex;
+  justify-content: space-between;
+}
+/* 左侧大小图样式 */
+.productLeft {
+  width: 450px;
+  position: relative;
+  margin-left: 200px;
+}
+/* 左侧中图 */
+.mdImg,
+.mdImg > img {
+  width: 350px;
+  height: 350px;
+}
+/*遮罩层superMarks */
+.superMarks {
+  width: 350px;
+  height: 350px;
+  background-color: rgba(220, 220, 220, 0);
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+/* 遮罩层 */
+.marks {
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  background-color: rgba(220, 220, 220, 0.5);
+  /*top:0px;  //内联设置了动态的top，left
         left:0px;*/
-    }
-    /* 左侧小图 */
-    .smImg{
-        width: 350px;
-        display:flex;
-        align-items: center;
-        justify-content: space-between;
-        overflow:hidden;
-    }
-    .smImgUl{
-        overflow:hidden;
-        width:370px;
-    }
-    .smImg ul{
-        display: flex;
-        width:370px;
-        margin:0;
-        padding:0;
-    }
-    .smImg ul>li{
-        padding:0 3px;
-    }
-    .smImg ul>li>.img{
-        /* padding:0 3px; */
-        border: 2px solid red;
-    }
-    .smImg img{
-        width:60px;
-        height:60px;
-        margin:4px;
-    }
-    /* 左侧隐藏大图 */
-    .lgImg{
-        width:400px;
-        height:400px;
-        overflow: hidden;
-        position:absolute;
-        top:0px;
-        left:450px;
-        border:2px solid #aaa;
-        background-color:#fff;
-    }
-    .lgImg img{
-        width:800px;
-        height:800px;
-        position:absolute;
-        /* top:100px;
+}
+/* 左侧小图 */
+.smImg {
+  width: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+}
+.smImgUl {
+  overflow: hidden;
+  width: 370px;
+}
+.smImg ul {
+  display: flex;
+  width: 370px;
+  margin: 0;
+  padding: 0;
+}
+.smImg ul > li {
+  padding: 0 3px;
+}
+.smImg ul > li > .img {
+  /* padding:0 3px; */
+  border: 2px solid red;
+}
+.smImg img {
+  width: 60px;
+  height: 60px;
+  margin: 4px;
+}
+/* 左侧隐藏大图 */
+.lgImg {
+  width: 400px;
+  height: 400px;
+  overflow: hidden;
+  position: absolute;
+  top: 0px;
+  left: 450px;
+  border: 2px solid #aaa;
+  background-color: #fff;
+}
+.lgImg img {
+  width: 800px;
+  height: 800px;
+  position: absolute;
+  /* top:100px;
         left:100px;*/
-    }
+}
 
-    /* product右侧 */
-    .productRight{
-        width:700px;
-        
-    }
-    /* 左右按钮 */
-    .button-prev,.button-next{
-        width:35px;
-        height:35px;
-        line-height: 30px;
-        border:1px solid #ddd;
-        border-radius:50%;
-        text-align:center;
-    }
-    .button-prev:hover,.button-next:hover{
-        background-color:#eee;
-    }
-    .button-prev>img,.button-next>img{
-        width:20px;
-        height:20px;
-    }
+/* product右侧 */
+.productRight {
+  width: 700px;
+}
+/* 左右按钮 */
+.button-prev,
+.button-next {
+  width: 35px;
+  height: 35px;
+  line-height: 30px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  text-align: center;
+}
+.button-prev:hover,
+.button-next:hover {
+  background-color: #eee;
+}
+.button-prev > img,
+.button-next > img {
+  width: 20px;
+  height: 20px;
+}
 </style>
 

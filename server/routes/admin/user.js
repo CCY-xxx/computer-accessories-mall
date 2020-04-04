@@ -117,7 +117,6 @@ router.get('/delUser',(req,res)=>{
     })
 })
 
-//处理登录的业务逻辑
 router.get('/add',function(req,res){
     res.render('admin/user/addUser',{
         msg:''

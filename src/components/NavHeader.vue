@@ -49,8 +49,9 @@
     <div class="navbar">
       <div class="navbar-left-container">
         <span style="color:yellow;fontSize:30px">欢迎您！</span>
-        <span v-if="!nickName" class="navbar-link" style="color:black;fontSize:20px">请先登录</span>
+        <span v-if="!userName" class="navbar-link" style="color:black;fontSize:20px">请先登录</span>
         <span class="navbar-link" v-text="nickName" v-if="nickName"></span>
+        <span class="navbar-link"  v-if="!nickName&&userName">无名</span>
         <!-- <a href="/">
           <img
             class="navbar-brand-logo"
@@ -62,23 +63,24 @@
       </div>
       <div class="navbar-right-container" style="display: flex;">
         <div class="navbar-menu-container">
-          <a v-if="nickName" class="navbar-link navbar-cart-link"  href="/#/updatePwd">修改密码</a>
-           <!-- <router-link v-if="nickName" to="/order">查看订单</router-link> -->
-            <a v-if="nickName" class="navbar-link navbar-cart-link" href="/#/order">
+          <a-button  v-if="userName" type="primary" size="large" style="marginRight:10px;color:#f5ee0f;fontWeight:700"  href="/#/updatePwd">修改个人资料</a-button>
+          <a-button v-if="userName" type="primary" size="large" style="marginRight:10px;color:white;fontWeight:700"   href="/#/address">设置收货地址</a-button>
+           <!-- <router-link v-if="userName" to="/order">查看订单</router-link> -->
+            <a-button v-if="userName" type="primary" size="large" style="marginRight:10px;color:white;fontWeight:700" href="/#/order">
             查看历史订单
               <!-- <svg class="navbar-cart-logo">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart" />
               </svg> -->
-            </a>
-          <a href="javascript:void(0)" @click="reModalFlag=true, errorTip=false" v-if="!nickName">注册</a>
-          <a
+            </a-button>
+          <a-button href="javascript:void(0)" style="marginRight:10px" @click="reModalFlag=true, errorTip=false" v-if="!userName">注册</a-button>
+          <a-button
             href="javascript:void(0)"
             class="navbar-link"
             @click="loginModalFlag=true, errorTip=false,userPwd='',user=''"
-            v-if="!nickName"
-          >用户登录</a>
+            v-if="!userName"
+          >用户登录</a-button>
          
-          <a href="javascript:void(0)" class="navbar-link" @click="logOut" v-else>安全退出</a>
+          <a-button href="javascript:void(0)" type="danger" class="navbar-link" @click="logOut" v-else>安全退出</a-button>
           <div class="navbar-cart-container">
             <span class="navbar-cart-count" v-text="cartCount" v-if="cartCount!==0"></span>
             <a class="navbar-link navbar-cart-link" href="/#/cart">
@@ -213,6 +215,7 @@
 <script>
 import "./../assets/css/login.css";
 import axios from "axios";
+import Cookies from 'js-cookie'
 import { mapState } from "vuex";
 export default {
   data() {
@@ -231,10 +234,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(["nickName", "cartCount"])
+    ...mapState(["userName", "cartCount","nickName"])
   },
-  /*nickName(){
-          return this.$store.state.nickName;
+  /*userName(){
+          return this.$store.state.userName;
         },
         cartCount(){
           return this.$store.state.cartCount;
@@ -242,6 +245,7 @@ export default {
   mounted() {
     this.checkLogin();
        this.createCode();
+       this.initUserInfo()
   },
   methods: {
      createCode() {
@@ -256,13 +260,30 @@ export default {
     this.checkCode = code; //把code值赋给验证码  
    
 	},
-
+  initUserInfo() {
+      axios.get("/api/users/findUserInfo").then(response => {
+        console.log(response);
+        this.userInfo = response.data.result;
+        // this.birth = this.userInfo.birth;
+        // this.age = this.userInfo.age;
+        // this.phone = this.userInfo.phone;
+        // this.sex = this.userInfo.sex;
+        // this.remark = this.userInfo.remark;
+        // this.headUrl = this.userInfo.headUrl;
+        // this.userId = this.userInfo.userId;
+        // this.userName = this.userInfo.userName;
+        this.nickName = this.userInfo.nickName
+        console.log(this.userInfo);
+      });
+    },
     checkLogin() {
+    // this.nickName=Cookies.get('nickName');
+
       axios.get("/api/users/checkLogin").then(response => {
         var res = response.data;
         var path = this.$route.pathname;
         if (res.status == "0") {
-          //                      this.nickName = res.result;
+          //                      this.userName = res.result;
           this.$store.commit("updateUserInfo", res.result);
           this.loginModalFlag = false;
         } else {
@@ -374,7 +395,7 @@ export default {
       axios.post("/api/users/logout").then(response => {
         let res = response.data;
         if (res.status == "0") {
-          //                        this.nickName = '';
+          //                        this.userName = '';
           this.$store.commit("updateUserInfo", res.result.userName);
           this.$router.push("/");
           location.reload();

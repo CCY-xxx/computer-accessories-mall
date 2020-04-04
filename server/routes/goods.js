@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var Goods = require('../modules/goods');
+var User = require('../modules/user');
 mongoose.Promise = global.Promise;
 //连接MongoDB数据库
 // mongoose.connect('mongodb://127.0.0.1:27017/dumall');
@@ -148,7 +149,7 @@ router.get('/search', function (req, res) {
 //加入到购物车
 router.post("/addCart", function (req,res,next) {
   var userId =req.cookies.userId,_id = req.body._id;
-  var User = require('../modules/user');
+ 
   console.log(userId)
   User.findOne({userId:userId},(err,userDoc)=> {
       console.log(err)
@@ -185,6 +186,7 @@ router.post("/addCart", function (req,res,next) {
           }else{
             Goods.findOne({_id:_id}, function (err1,doc) {
               console.log(doc)
+              console.log('_________________________')
               if(err1){
                 res.json({
                   status:"1",

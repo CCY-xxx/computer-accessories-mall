@@ -16,6 +16,8 @@ var produtSchema = new Schema({
   "createTime":String,
   "updateTime":String,
   "saleNum":Number,
+  "overstock":Number,
+  "isDelete":Boolean,
   "evaluate":[
     {
       "userName": String,

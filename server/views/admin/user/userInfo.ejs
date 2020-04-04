@@ -31,9 +31,15 @@
                                 <input type="hidden" name="_id" value="<%=userDoc._id%>" />
 
 
-                                <li style="font-size:16px;"> 用户名: <input type="text" name="userName" value="<%=userDoc.userName%>" /></li>
-                                <li style="font-size:16px;"> 用户邮箱: <input type="text" name="userId" value="<%=userDoc.userId%>" /></li>
-                                <li style="font-size:16px;"> 用户密码: <input type="text" name="usrPwd" value="<%=userDoc.userPwd%>" /></li>
+                                <li style="font-size:16px;"> 用户名字: <input disabled type="text" name="userName" value="<%=userDoc.userName%>" /></li>
+                                <li style="font-size:16px;"> 用户邮箱: <input disabled type="text" name="userId" value="<%=userDoc.userId%>" /></li>
+                                <li style="font-size:16px;"> 用户昵称: <input disabled type="text" name="nickName" value="<%=userDoc.nickName%>" /></li>
+                                <li style="font-size:16px;"> 用户年龄: <input disabled type="text" name="age" value="<%=userDoc.age%>" /></li>
+                                <li style="font-size:16px;"> 用户性别: <input disabled type="text" name="sex" value="<%=userDoc.sex%>" /></li>
+                                <li style="font-size:16px;"> 用户生日: <input disabled type="text" name="birth" value="<%=userDoc.birth%>" /></li>
+                                <li style="font-size:16px;"> 用户手机: <input disabled type="text" name="phone" value="<%=userDoc.phone%>" /></li>
+                                <li style="font-size:16px;"> 用户备注: <input disabled type="text" name="remark" value="<%=userDoc.remark%>" /></li>
+                                <!-- <li style="font-size:16px;"> 用户密码: <input type="text" name="usrPwd" value="<%=userDoc.userPwd%>" /></li> -->
                                 <li> <h4>用户订单:</h4>
                                     <div class="table-responsive">
                                         <table class="table table-striped ">
@@ -103,7 +109,7 @@
 
                                 <li>
                                     <br/>
-                                    <button type="submit" class="btn btn-default">提交</button>
+                                    <!-- <button type="submit" class="btn btn-default">提交</button> -->
                                 </li>
 
                             </ul>

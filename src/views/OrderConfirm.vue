@@ -2,7 +2,7 @@
   <div>
     <nav-header></nav-header>
     <nav-bread>
-      <span>订单确认</span>
+      <span style="fontSize:25px">订单确认</span>
     </nav-bread>
     <svg
       style="position: absolute; width: 0; height: 0; overflow: hidden;"

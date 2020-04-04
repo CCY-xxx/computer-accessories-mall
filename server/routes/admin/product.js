@@ -9,11 +9,11 @@ var DB = require('../../modules/db.js');  /*引入DB数据库*/
 
 var multiparty = require('multiparty');  /*图片上传模块  即可以获取form表单的数据 也可以实现上传图片*/
 var fs = require('fs');
-
+//查询所有配件
 router.get('/', function (req, res) {
     var pager = {};//构造一个分页对象用来存关于分页的一些数据
     pager.pagePath = '/admin/product?';//分页路径
-    pager.pageSize = 3;//一页所展示的数据量
+    pager.pageSize = 5;//一页所展示的数据量
     pager.pageCurrent = 1;//当前页数
     console.log(req.query)
     var current = req.query.current//从url中获取当前的页数参数（current）
@@ -55,7 +55,7 @@ router.post('/search', function (req, res) {
     var reg = new RegExp(title)//利用正则处理搜索字符串
     var pager = {}
     pager.pagePath = '/admin/product?'
-    pager.pageSize = 3;
+    pager.pageSize = 5;
     pager.pageCurrent = 1;
     console.log(req.query)
     var current = req.query.current
@@ -87,6 +87,98 @@ router.post('/search', function (req, res) {
             })
         } else {
             res.render('admin/product/index', {
+                list: data,
+                pager
+            });
+        }
+    })
+   
+})
+//回收站配件
+router.get('/peijian', function (req, res) {
+    var pager = {};//构造一个分页对象用来存关于分页的一些数据
+    pager.pagePath = '/admin/product/peijian?';//分页路径
+    pager.pageSize = 3;//一页所展示的数据量
+    pager.pageCurrent = 1;//当前页数
+    console.log(req.query)
+    var current = req.query.current//从url中获取当前的页数参数（current）
+    console.log(current)
+    if (current == undefined) {
+        pager.pageCurrent = 1;
+    } else {
+        pager.pageCurrent = current;
+    }
+    var limit = pager.pageSize//将一页所展示数量赋给数据库参数limit
+    var skip = (pager.pageCurrent - 1) *  pager.pageSize;//计算跳过的数据条数（商品数量）
+    pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
+    DB.findPage('products', {isDelete:true}, skip, limit,(err,len)=>{
+        if (err) {
+            res.json({
+                stutas: '1'
+            })
+        } else {
+            pager.maxNum = len;//商品总数量
+            pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
+        }
+    }, (err, data) => {
+        if (err) {
+            res.json({
+                stutas: '1'
+            })
+        } else {
+            // let result=data.filter(item=>{
+            //    return item.isDelete==true
+            // })
+            res.render('admin/product/peijian', {
+                list: data,
+                pager
+            });
+        }
+    })
+})
+//回收站模糊查询
+router.post('/peijianSearch', function (req, res) {
+    var title = req.body.title
+    console.log(title)
+    var reg = new RegExp(title)//利用正则处理搜索字符串
+    var pager = {}
+    pager.pagePath = '/admin/product/peijian?'
+    pager.pageSize = 3;
+    pager.pageCurrent = 1;
+    console.log(req.query)
+    var current = req.query.current
+    console.log(current)
+    if (current == undefined) {
+        pager.pageCurrent = 1;
+    } else {
+        pager.pageCurrent = current;
+    }
+    var limit = pager.pageSize
+    let skip = (pager.pageCurrent - 1) *  pager.pageSize;
+    pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
+    DB.findPage('products',
+   { $and : [
+        {$or: [  { title: { $regex: reg } }, { brand: { $regex: reg } }]},
+        {isDelete:true},
+    ]}
+    
+    
+    , skip, limit,(err,len)=>{
+        if (err) {
+            res.json({
+                stutas: '1'
+            })
+        } else {
+            pager.maxNum = len;
+            pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
+        }
+    }, (err, data) => {
+        if (err) {
+            res.json({
+                stutas: '1'
+            })
+        } else {
+            res.render('admin/product/peijian', {
                 list: data,
                 pager
             });
@@ -130,6 +222,7 @@ router.post('/doAdd', function (req, res) {
         var productId=fields.productId[0];
         var price = parseInt(fields.price[0]);
         var brand = fields.brand[0];
+        var overstock = fields.overstock[0];
         var from = fields.from[0];
         var productDec = fields.productDec[0];
         var productImg = files.productImage[0].path;
@@ -148,12 +241,14 @@ router.post('/doAdd', function (req, res) {
             productImage,
             productDec,
             from,
+            isDelete:false,
             isPush:false,
             createTime:new Date().Format("yyyy-MM-dd hh:mm:ss"),
             saleNum:0,
             evaluate:[],
             goodEvaluate:0,
             badEvaluate:0,
+            overstock
         }, function (err, data) {
             if (!err) {
                 res.send("<script>location.href='/admin/product'</script>");
@@ -200,6 +295,7 @@ router.post('/doEdit', function (req, res) {
         var price = parseInt(fields.price[0]);
         var productId = fields.productId[0];
         var brand = fields.brand[0];
+        var overstock = fields.overstock[0];
         var _id = fields._id[0]; 
         // var description=fields.description[0];
         // var productImage=files.productImage[0].path;
@@ -227,6 +323,7 @@ router.post('/doEdit', function (req, res) {
                 productImage,
                 productDec,
                 from,
+                overstock,
                 // isPush:false,
                 updateTime:new Date().Format("yyyy-MM-dd hh:mm:ss"),
                 // saleNum:0
@@ -239,6 +336,7 @@ router.post('/doEdit', function (req, res) {
                 productId,
                 productDec,
                 from,
+                overstock,
                 // isPush:false,
                 updateTime:new Date().Format("yyyy-MM-dd hh:mm:ss"),
                 // saleNum:0
@@ -269,7 +367,7 @@ router.post('/doEdit', function (req, res) {
     });
 
 })
-
+//删除配件
 router.get('/delete', function (req, res) {
     //获取id
 
@@ -278,7 +376,7 @@ router.get('/delete', function (req, res) {
     DB.deleteOne('products', { "_id": new DB.ObjectID(id) }, function (err) {
 
         if (!err) {
-            res.send("<script>location.href='/admin/product'</script>");
+            // res.send("<script>location.href='/admin/product'</script>");
             // res.redirect('/admin/product');
             // res.end()
         }
@@ -286,6 +384,68 @@ router.get('/delete', function (req, res) {
     })
 
 })
+//清空配件回收站
+router.get('/clearReturnSta', function (req, res) {
+    //获取id
+
+    var id = req.query.id;
+
+    DB.remove('products', {  isDelete: true }, function (err) {
+
+        if (!err) {
+            res.send("<script>location.href='/admin/product/peijian'</script>");
+            // res.redirect('/admin/product');
+            // res.end()
+        }
+
+    })
+
+})
+//撤回
+router.get('/returnPeijian', function (req, res) {
+    //获取id
+    var id = req.query.id;
+    var setData={}
+    DB.find('products',{"_id": new DB.ObjectID(id)},(err,data)=>{
+        console.log(data)
+        setData =  {
+        isDelete:false
+      }
+      DB.update('products', { "_id": new DB.ObjectID(id) }, setData, function (err, data) {
+
+        if (!err) {
+            // res.send("<script>location.href='/admin/product'</script>");
+
+            // res.send("<script>location.href='/admin/notice'</script>");
+            // res.redirect('/admin/product');alert('修改公告成功,点击确定跳转到公告列表');
+        }
+    })
+    })
+
+})
+//假删除
+router.get('/falseDelete', function (req, res) {
+    //获取id
+    var id = req.query.id;
+    var setData={}
+    DB.find('products',{"_id": new DB.ObjectID(id)},(err,data)=>{
+        console.log(data)
+        setData =  {
+        isDelete:true
+      }
+      DB.update('products', { "_id": new DB.ObjectID(id) }, setData, function (err, data) {
+
+        if (!err) {
+            // res.send("<script>location.href='/admin/product'</script>");
+
+            // res.send("<script>location.href='/admin/notice'</script>");
+            // res.redirect('/admin/product');alert('修改公告成功,点击确定跳转到公告列表');
+        }
+    })
+    })
+
+})
+
 //是否显示
 router.get('/isPush',(req,res)=>{
     var id = req.query.id;

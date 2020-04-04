@@ -5,7 +5,7 @@ var router = express.Router();   /*可使用 express.Router 类创建模块化�
 
 var multiparty = require('multiparty'); 
 var DB=require('../../modules/db.js');  /*引入DB数据库*/
-
+//查询所有公告
 router.get('/',function(req,res){
     //res.send('显示公告首页');
     var pager = {};//构造一个分页对象用来存关于分页的一些数据
@@ -94,6 +94,97 @@ router.post('/search', function (req, res) {
     })
    
 })
+//查询回收站公告
+router.get('/notice',function(req,res){
+    //res.send('显示公告首页');
+    var pager = {};//构造一个分页对象用来存关于分页的一些数据
+    pager.pagePath = '/admin/notice/notice?';//分页路径
+    pager.pageSize = 3;//一页所展示的数据量
+    pager.pageCurrent = 1;//当前页数
+    console.log(req.query)
+    var current = req.query.current//从url中获取当前的页数参数（current）
+    console.log(current)
+    if (current == undefined) {
+        pager.pageCurrent = 1;
+    } else {
+        pager.pageCurrent = current;
+    }
+    var limit = pager.pageSize//将一页所展示数量赋给数据库参数limit
+    var skip = (pager.pageCurrent - 1) *  pager.pageSize;//计算跳过的数据条数（商品数量）
+    pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
+    DB.findPage('notices', {isDelete:true}, skip, limit,(err,len)=>{
+        if (err) {
+            res.json({
+                stutas: '1'
+            })
+        } else {
+            pager.maxNum = len;//商品总数量
+            pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
+        }
+    }, (err, data) => {
+        if (err) {
+            res.json({
+                stutas: '1'
+            })
+        } else {
+            res.render('admin/notice/notice', {
+                list: data,
+                pager
+            });
+        }
+    })
+
+
+
+})
+//模糊查询
+router.post('/noticeSearch', function (req, res) {
+    var title = req.body.title
+    console.log(title)
+    var reg = new RegExp(title)//利用正则处理搜索字符串
+    var pager = {}
+    pager.pagePath = '/admin/notice/notice?'
+    pager.pageSize = 3;
+    pager.pageCurrent = 1;
+    console.log(req.query)
+    var current = req.query.current
+    console.log(current)
+    if (current == undefined) {
+        pager.pageCurrent = 1;
+    } else {
+        pager.pageCurrent = current;
+    }
+    var limit = pager.pageSize
+    let skip = (pager.pageCurrent - 1) *  pager.pageSize;
+    pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
+    DB.findPage('notices',{$and:[
+        {
+           info: { $regex: reg }
+        },
+        {isDelete:true}
+    ] }, skip, limit,(err,len)=>{
+        if (err) {
+            res.json({
+                stutas: '1'
+            })
+        } else {
+            pager.maxNum = len;
+            pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
+        }
+    }, (err, data) => {
+        if (err) {
+            res.json({
+                stutas: '1'
+            })
+        } else {
+            res.render('admin/notice/notice', {
+                list: data,
+                pager
+            });
+        }
+    })
+   
+})
 router.post('/editNotice', function (req, res) {
 
     //获取get传值 id
@@ -150,6 +241,68 @@ router.get('/delNotice',(req,res)=>{
             // res.redirect('/admin/product');
         }
     })
+})
+//清空公告回收站
+router.get('/clearNoticeReturnSta', function (req, res) {
+    //获取id
+
+    var id = req.query.id;
+
+    DB.remove('notices', {  isDelete: true }, function (err) {
+
+        if (!err) {
+            res.send("<script>location.href='/admin/notice/notice'</script>");
+            // res.redirect('/admin/product');
+            // res.end()
+        }
+
+    })
+
+})
+//撤回
+router.get('/returnNotice', function (req, res) {
+    //获取id
+    var id = req.query.id;
+    var setData={}
+    DB.find('notices',{"_id": new DB.ObjectID(id)},(err,data)=>{
+        console.log(data)
+        setData =  {
+        isDelete:false
+      }
+      DB.update('notices', { "_id": new DB.ObjectID(id) }, setData, function (err, data) {
+
+        if (!err) {
+            // res.send("<script>location.href='/admin/product'</script>");
+
+            // res.send("<script>location.href='/admin/notice'</script>");
+            // res.redirect('/admin/product');alert('修改公告成功,点击确定跳转到公告列表');
+        }
+    })
+    })
+
+})
+//假删除
+router.get('/falseNoticeDelete', function (req, res) {
+    //获取id
+    var id = req.query.id;
+    var setData={}
+    DB.find('notices',{"_id": new DB.ObjectID(id)},(err,data)=>{
+        console.log(data)
+        setData =  {
+        isDelete:true,
+        isShow:false
+      }
+      DB.update('notices', { "_id": new DB.ObjectID(id) }, setData, function (err, data) {
+
+        if (!err) {
+            // res.send("<script>location.href='/admin/product'</script>");
+
+            // res.send("<script>location.href='/admin/notice'</script>");
+            // res.redirect('/admin/product');alert('修改公告成功,点击确定跳转到公告列表');
+        }
+    })
+    })
+
 })
 //是否显示
 router.get('/isShow',(req,res)=>{
@@ -209,6 +362,7 @@ router.post("/addNotice", function (req, res) {
                 info,
                 noticeId,
                 isShow:true,
+                isDelete:false,
                 createTime:new Date().Format("yyyy-MM-dd hh:mm:ss"),
                 createPerson:req.session.userinfo.username
             };

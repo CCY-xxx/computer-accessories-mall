@@ -4,6 +4,7 @@ var userSchema = new mongoose.Schema({
   "userId":String,
   "userName":String,
   "userPwd":String,
+  "nickName":String,
   "phone":String,
   "remark":String,
   "age":String,
@@ -16,7 +17,6 @@ var userSchema = new mongoose.Schema({
       "orderTotal" : Number,
       "addressInfo" : Object,
       "isEvaluate":Boolean,
-
       "goodsList" : [ 
           {
               "brand" : String,
@@ -30,7 +30,16 @@ var userSchema = new mongoose.Schema({
               "productNum" : Number,
               "checked" : String,
               "saleNum":Number,
-              "evaluate":String,
+              "isDelete":Boolean,
+              "evaluate":[
+                {
+                  "userName": String,
+                  "createTime":String,
+                  "infoStr":String,
+                  "orther":String,
+                  "phone":String
+                }
+              ],
               "goodEvaluate":Number,
               "badEvaluate":Number,
               "isEvaluate":Boolean
@@ -53,7 +62,15 @@ var userSchema = new mongoose.Schema({
     "checked":String,
     "productNum":Number,
     "saleNum":Number,
-    "evaluate":String,
+    "evaluate":[
+      {
+        "userName": String,
+        "createTime":String,
+        "infoStr":String,
+        "orther":String,
+        "phone":String
+      }
+    ],
     "goodEvaluate":Number,
     "badEvaluate":Number,
     }

@@ -2,7 +2,7 @@
   <div>
     <nav-header></nav-header>
     <nav-bread>
-      <span>商品列表</span>
+      <span style="fontSize:25px">商品列表</span>
     </nav-bread>
     <div class="accessory-result-page accessory-page">
       <div class="container">
@@ -42,7 +42,10 @@
         </div>
         <div class="filter-nav" style="display:flex;justifyContent:space-between">
           <div>
-            <a-button type="primary" @click="pushGoods()">推荐</a-button>
+            <a-button type="primary" @click="pushGoods()">配件推荐</a-button>
+            <a-button type="primary">优惠促销</a-button>
+            <a-button type="primary">畅销配件</a-button>
+            <a-button type="primary">好评配件</a-button>
           </div>
           <div style="width: 290px;display: flex;">
             <div>
