@@ -9,17 +9,17 @@
         </div>
         <div class="col-sm-10">
             <ol class="breadcrumb">
-                <li class="active">用户管理
+                <li class="active">订单管理
                 </li>
-                <li class="active" ><a href="/admin/user">用户列表...</a>
+                <li class="active" ><a >订单列表</a>
                     </li>
-                <li class="active">用户详细信息以及订单审核
-                </li>
+                <!-- <li class="active">订单列表
+                </li> -->
             </ol>
             <div class="panel panel-default">
 
                 <div class="panel-heading">
-                    修改用户信息
+                    订单列表
                 </div>
             <div style="position: absolute;top:20px;left:450px;opacity: 0;" id="msgId"  class="alert alert-success" role="alert"></div>
 
@@ -28,19 +28,8 @@
                         <form action="/admin/user/editUser" method="post" enctype="multipart/form-data">
                             <ul>
 
-                                <input type="hidden" name="_id" value="<%=userDoc._id%>" />
-
-
-                                <li style="font-size:16px;"> 用户名字: <input disabled type="text" name="userName" value="<%=userDoc.userName%>" /></li>
-                                <li style="font-size:16px;"> 用户邮箱: <input disabled type="text" name="userId" value="<%=userDoc.userId%>" /></li>
-                                <li style="font-size:16px;"> 用户昵称: <input disabled type="text" name="nickName" value="<%=userDoc.nickName%>" /></li>
-                                <li style="font-size:16px;"> 用户年龄: <input disabled type="text" name="age" value="<%=userDoc.age%>" /></li>
-                                <li style="font-size:16px;"> 用户性别: <input disabled type="text" name="sex" value="<%=userDoc.sex%>" /></li>
-                                <li style="font-size:16px;"> 用户生日: <input disabled type="text" name="birth" value="<%=userDoc.birth%>" /></li>
-                                <li style="font-size:16px;"> 用户手机: <input disabled type="text" name="phone" value="<%=userDoc.phone%>" /></li>
-                                <li style="font-size:16px;"> 用户备注: <input disabled type="text" name="remark" value="<%=userDoc.remark%>" /></li>
-                                <!-- <li style="font-size:16px;"> 用户密码: <input type="text" name="usrPwd" value="<%=userDoc.userPwd%>" /></li> -->
-                                <li> <h4>用户订单:</h4>
+                               
+                                <!-- <li> <h4>订单列表:</h4> -->
                                     <div class="table-responsive">
                                         <table class="table table-striped ">
                                             <thead>
@@ -61,49 +50,44 @@
 
                                             <tbody>
 
-                                                <% for(var i=0;i<userDoc.orderList.length;i++){%>
+                                                <% for(var i=0;i<list.length;i++){%>
                                                 <tr>
                                                     <td><%=i+1%></td>
 
-                                                    <td><%=userDoc.orderList[i].orderId%></td>
-                                                    <td><%=userDoc.orderList[i].orderTotal%></td>
-                                                    <td><%=userDoc.orderList[i].createDate%></td>
-                                                    <%if(userDoc.orderList[i].orderStatus=="1"){%>
+                                                    <td><%=list[i].orderId%></td>
+                                                    <td><%=list[i].orderTotal%></td>
+                                                    <td><%=list[i].createDate%></td>
+                                                    <%if(list[i].orderStatus=="1"){%>
                                                     <td>
                                                         <a class="btn btn-warning" >已支付</a>
                                                     </td>
-                                                      <%}else if(userDoc.orderList[i].orderStatus=="0"){%>
+                                                      <%}else if(list[i].orderStatus=="0"){%>
                                                         <td>
                                                             <a class="btn btn-danger" >未支付</a>
                                                         </td>
-                                                      <%}else if(userDoc.orderList[i].orderStatus=="2"){%>
+                                                      <%}else if(list[i].orderStatus=="2"){%>
                                                       <td>
                                                         <a class="btn btn-success" >已发货</a>
                                                     </td>
-                                                    <%}else if(userDoc.orderList[i].orderStatus=="3"){%>
+                                                    <%}else if(list[i].orderStatus=="3"){%>
                                                         <td>
                                                           <a class="btn btn-primary" >已收货</a>
                                                       </td>
                                                       <%}%>
                                                     <td>
-                                                        <a href="/admin/user/findUserOrder?orderId=<%=userDoc.orderList[i].orderId%>&&_id=<%=userDoc._id%>"
+                                                        <a href="/admin/user/orderUserInfo?orderId=<%=list[i].orderId%>"
+                                                            class="btn btn-success">审核</a>
+                                                    
+                                                        <a href="/admin/user/orderInfo?orderId=<%=list[i].orderId%>"
                                                             class="btn btn-success">查看</a>
-                                                        <!-- <a href="/admin/user/sendGoods?orderId=<%=userDoc.orderList[i].orderId%>&&_id=<%=userDoc._id%>&&orderStatus=<%=userDoc.orderList[i].orderStatus%>"
-                                                            class="btn btn-success">发货</a> -->
-                                                            <%if(userDoc.orderList[i].orderStatus=="1"){%>
-                                                                <a href="/admin/user/sendGoods?orderId=<%=userDoc.orderList[i].orderId%>&&_id=<%=userDoc._id%>&&orderStatus=<%=userDoc.orderList[i].orderStatus%>" class="btn btn-danger" ><span onclick="hide()">发货</span></a>
-                                                              <%}else{%>
-                                                                <a href="/admin/user/sendGoods?orderId=<%=userDoc.orderList[i].orderId%>&&_id=<%=userDoc._id%>&&orderStatus=<%=userDoc.orderList[i].orderStatus%>" class="btn btn-default disabled" ><span>发货</span></a>
-                                                              <%}%>
+                                                    
+                                                         
                                                     </td>
                                                 </tr>
 
                                                 <%}%>
                                     </tbody>
                                     </table>
-                                    <div style="display: flex;justify-content: center;">
-                                        <a  onclick="window.history.back()" class="btn btn-primary ">返回</a>
-                                    </div>
                                     </div>
                                 </li>
 

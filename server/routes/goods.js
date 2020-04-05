@@ -30,7 +30,9 @@ router.get("/list", function (req,res,next) {
   let sortType = req.param("sortType");
   let skip = (page-1)*pageSize;
   var priceGt = '',priceLte = '';
-  let params = {};
+  let params = {
+    isUpStage:true,
+  };
   if(priceLevel!='all'){
     switch (priceLevel){
       case '0':priceGt = 0;priceLte=100;break;
@@ -42,7 +44,9 @@ router.get("/list", function (req,res,next) {
      price:{
           $gt:priceGt,
           $lte:priceLte
-      }
+      },
+       isUpStage:true,
+
     }
     console.log(params)
   }
@@ -84,7 +88,10 @@ router.get('/search', function (req, res) {
   let sortType = req.param("sortType");
   // let skip = (page-1)*pageSize;
   var priceGt = '',priceLte = '';
-  let params = {};
+  let params = {
+    isUpStage:true,
+
+  };
   console.log(keyword)
   if(priceLevel!='all'){
     switch (priceLevel){
@@ -97,7 +104,9 @@ router.get('/search', function (req, res) {
      price:{
           $gt:priceGt,
           $lte:priceLte
-      }
+      },
+    isUpStage:true,
+
     }
     console.log(params)
   }
@@ -172,7 +181,7 @@ router.post("/addCart", function (req,res,next) {
             userDoc.save(function (err2,doc2) {
               if(err2){
                 res.json({
-                  status:"1",
+                  status:"13434",
                   msg:err2.message
                 })
               }else{
@@ -184,8 +193,9 @@ router.post("/addCart", function (req,res,next) {
               }
             })
           }else{
+            console.log(_id)
             Goods.findOne({_id:_id}, function (err1,doc) {
-              console.log(doc)
+              // console.log(doc)
               console.log('_________________________')
               if(err1){
                 res.json({

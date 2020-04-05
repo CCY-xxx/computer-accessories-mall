@@ -18,6 +18,26 @@ router.get('/',function(req,res){
 
 
 })
+//由用户遍历订单列表(订单列表这块其实还可以直接给用户下的订单数据加个userId,进而查询订单详情以及用户详情，主要是怕麻烦没这样做)
+router.get('/orderList',function(req,res){
+    //res.send('显示用户首页');
+ 
+    DB.find('users',{},function(err,data){
+        // console.log(data)
+        var orderList=[]
+       data.forEach(item=>{
+           orderList= orderList.concat(item.orderList)
+        //  orderList=[...orderList,...item.orderList]也行
+        })
+        console.log(orderList)
+        res.render('admin/user/orderList',{
+            list:orderList
+        });
+    })
+
+
+
+})
 
 router.post('/editUser', function (req, res) {
 
@@ -78,6 +98,57 @@ router.get('/findUserOrder',(req,res)=>{
             }
         }
       
+        
+    })
+})
+//查看订单详情
+router.get('/orderInfo',(req,res)=>{
+    var orderId=req.query.orderId;
+    // var id=req.query._id;
+    console.log(orderId)
+    // console.log(id)
+    DB.find('users',{'orderList.orderId':orderId},(err,data)=>{
+        console.log(data)
+      let order=  data[0].orderList.filter(item=>{
+            return item.orderId==orderId
+        })
+        console.log(order)
+
+        res.render('admin/user/userOrder', {
+            // id:id,
+            order:order[0]
+        });
+      
+        
+    })
+})
+//查看订单所属用户信息
+router.get('/orderUserInfo',(req,res)=>{
+    var orderId=req.query.orderId;
+    // var id=req.query._id;
+    console.log(orderId)
+    // console.log(id)
+    DB.find('users',{},(err,data)=>{
+        // for(var i=0;i<data.length;i++){
+        //     for(var j=0;j<data[i].length;j++){
+        //         if(data[i].orderList.orderId==orderId){
+        //             res.render('admin/user/userInfo', {
+        //                 // id:id,
+        //                 userDoc:data[i]
+        //             });
+        //         }
+        //     }
+        // }//不行
+      data.map(item=>{
+          item.orderList.map(order=>{
+             if(order.orderId==orderId) {
+                res.render('admin/user/userInfo', {
+                                    // id:id,
+                                    userDoc:item
+                                });
+             }
+          })
+      })
         
     })
 })

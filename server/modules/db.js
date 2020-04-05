@@ -35,8 +35,42 @@ exports.find = function(collectionname, json, callback) {
   });
 };
 
-//多条件查询数据库
+//多条件查询数据库(有排序)
 exports.findPage = function(
+  collectionname,
+  json,
+  sort,
+  skip,
+  limit,
+  callback1,
+  callback2
+) {
+  __connectDb(function(db) {
+   
+      console.log("33"+sort.productId)
+  
+       var result = db
+        .collection(collectionname)
+        .find(json)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit);
+   
+    var len = db.collection(collectionname).find(json);
+
+    len.toArray(function(error, data) {
+      db.close(); /*�ر����ݿ�����*/
+      callback1(error, data.length); /*�õ�����ִ�лص�����*/
+    });
+    result.toArray(function(error, data) {
+      db.close(); /*�ر����ݿ�����*/
+      callback2(error, data); /*�õ�����ִ�лص�����*/
+    });
+  });
+};
+//多条件查询数据库(无排序)
+
+exports.findPageNoSort = function(
   collectionname,
   json,
   skip,
@@ -45,11 +79,13 @@ exports.findPage = function(
   callback2
 ) {
   __connectDb(function(db) {
-    var result = db
-      .collection(collectionname)
-      .find(json)
-      .skip(skip)
-      .limit(limit);
+   
+       var result = db
+        .collection(collectionname)
+        .find(json)
+        .skip(skip)
+        .limit(limit);
+   
     var len = db.collection(collectionname).find(json);
 
     len.toArray(function(error, data) {

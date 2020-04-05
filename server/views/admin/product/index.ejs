@@ -52,7 +52,8 @@
                         <th>名称</th>
                         <th>价格</th>
                         <th>分类</th>
-                        <th>状态</th>
+                        <th>推送状态</th>
+                        <th>上下架状态</th>
                         <th>销量</th>
                         <th>货存</th>
                         <th>创建时间</th>
@@ -75,6 +76,11 @@
                         <td><a class="btn btn-success" >已推送</a></td>
                       <%}else{%>
                         <td><a class="btn btn-danger" >未推送</a></td>
+                      <%}%>
+                    <%if(list[i].isUpStage){%>
+                        <td><a class="btn btn-success" >上架</a></td>
+                      <%}else{%>
+                        <td><a class="btn btn-danger" >下架</a></td>
                       <%}%>
                     <td><%=list[i].saleNum%></td>
                     <td>
@@ -100,6 +106,11 @@
                             <a href="/admin/product/isPush?id=<%=list[i]._id%>" class="btn btn-danger" ><span onclick="hide()">取消推送</span></a>
                           <%}else{%>
                             <a href="/admin/product/isPush?id=<%=list[i]._id%>" class="btn btn-danger" ><span onclick="show()">推送</span></a>
+                          <%}%>
+                        <%if(list[i].isUpStage){%>
+                            <a href="/admin/product/isUpStage?id=<%=list[i]._id%>" class="btn btn-danger" ><span onclick="up()">下架</span></a>
+                          <%}else{%>
+                            <a href="/admin/product/isUpStage?id=<%=list[i]._id%>" class="btn btn-success" ><span onclick="down()">上架</span></a>
                           <%}%>
                         <a href="/admin/product/edit?id=<%=list[i]._id%>" class="btn btn-success">修改</a>
                         <%}%>
@@ -229,6 +240,26 @@ function show(){
    　　var msg = document.getElementById("msgId");
    console.log(msg)
    msg.innerHTML = "已推送";
+   // msg.style.display='block'
+   msg.style.opacity='1'
+   msg.style.transition='opacity 2s'
+
+    setTimeout("hideMsg()",2000)
+}
+function down(){
+   
+   　　var msg = document.getElementById("msgId");
+   console.log(msg)
+   msg.innerHTML = "已下架";
+   // msg.style.display='block'
+   msg.style.opacity='1'
+   msg.style.transition='opacity 2s'
+    setTimeout("hideMsg()", 2000)
+}
+function up(){
+   　　var msg = document.getElementById("msgId");
+   console.log(msg)
+   msg.innerHTML = "已上架";
    // msg.style.display='block'
    msg.style.opacity='1'
    msg.style.transition='opacity 2s'

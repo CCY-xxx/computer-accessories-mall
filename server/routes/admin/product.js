@@ -23,10 +23,11 @@ router.get('/', function (req, res) {
     } else {
         pager.pageCurrent = current;
     }
+    var sort={"productId":-1}
     var limit = pager.pageSize//将一页所展示数量赋给数据库参数limit
     var skip = (pager.pageCurrent - 1) *  pager.pageSize;//计算跳过的数据条数（商品数量）
     pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
-    DB.findPage('products', {}, skip, limit,(err,len)=>{
+    DB.findPage('products', {},sort, skip, limit,(err,len)=>{
         if (err) {
             res.json({
                 stutas: '1'
@@ -65,13 +66,15 @@ router.post('/search', function (req, res) {
     } else {
         pager.pageCurrent = current;
     }
+    var sort={"productId":-1}
+
     var limit = pager.pageSize
     let skip = (pager.pageCurrent - 1) *  pager.pageSize;
     pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
     DB.findPage('products', { $or: [
         { title: { $regex: reg } },
         { brand: { $regex: reg } }
-    ]}, skip, limit,(err,len)=>{
+    ]},sort, skip, limit,(err,len)=>{
         if (err) {
             res.json({
                 stutas: '1'
@@ -108,10 +111,11 @@ router.get('/peijian', function (req, res) {
     } else {
         pager.pageCurrent = current;
     }
+    var sort={"productId":-1}
     var limit = pager.pageSize//将一页所展示数量赋给数据库参数limit
     var skip = (pager.pageCurrent - 1) *  pager.pageSize;//计算跳过的数据条数（商品数量）
     pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
-    DB.findPage('products', {isDelete:true}, skip, limit,(err,len)=>{
+    DB.findPage('products', {isDelete:true}, sort,skip, limit,(err,len)=>{
         if (err) {
             res.json({
                 stutas: '1'
@@ -153,6 +157,7 @@ router.post('/peijianSearch', function (req, res) {
     } else {
         pager.pageCurrent = current;
     }
+    var sort={"productId":-1}
     var limit = pager.pageSize
     let skip = (pager.pageCurrent - 1) *  pager.pageSize;
     pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
@@ -163,7 +168,7 @@ router.post('/peijianSearch', function (req, res) {
     ]}
     
     
-    , skip, limit,(err,len)=>{
+    ,sort, skip, limit,(err,len)=>{
         if (err) {
             res.json({
                 stutas: '1'
@@ -241,6 +246,7 @@ router.post('/doAdd', function (req, res) {
             productImage,
             productDec,
             from,
+            isUpStage:true,
             isDelete:false,
             isPush:false,
             createTime:new Date().Format("yyyy-MM-dd hh:mm:ss"),
@@ -446,7 +452,7 @@ router.get('/falseDelete', function (req, res) {
 
 })
 
-//是否显示
+//是否推送
 router.get('/isPush',(req,res)=>{
     var id = req.query.id;
     var setData={}
@@ -456,6 +462,30 @@ router.get('/isPush',(req,res)=>{
         isPush:false
       }:{
         isPush:true
+      }
+      DB.update('products', { "_id": new DB.ObjectID(id) }, setData, function (err, data) {
+
+        if (!err) {
+            // res.send("<script>location.href='/admin/notice'</script>");
+            // res.redirect('/admin/product');alert('修改公告成功,点击确定跳转到公告列表');
+        }
+    })
+    })
+    
+   
+  
+})
+
+//上下架
+router.get('/isUpStage',(req,res)=>{
+    var id = req.query.id;
+    var setData={}
+    DB.find('products',{"_id": new DB.ObjectID(id)},(err,data)=>{
+        console.log(data)
+        setData = data[0].isUpStage? {
+            isUpStage:false
+      }:{
+        isUpStage:true
       }
       DB.update('products', { "_id": new DB.ObjectID(id) }, setData, function (err, data) {
 

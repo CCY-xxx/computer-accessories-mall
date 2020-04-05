@@ -23,7 +23,7 @@ router.get('/',function(req,res){
     var limit = pager.pageSize//将一页所展示数量赋给数据库参数limit
     var skip = (pager.pageCurrent - 1) *  pager.pageSize;//计算跳过的数据条数（商品数量）
     pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
-    DB.findPage('notices', {}, skip, limit,(err,len)=>{
+    DB.findPageNoSort('notices', {}, skip, limit,(err,len)=>{
         if (err) {
             res.json({
                 stutas: '1'
@@ -68,7 +68,7 @@ router.post('/search', function (req, res) {
     var limit = pager.pageSize
     let skip = (pager.pageCurrent - 1) *  pager.pageSize;
     pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
-    DB.findPage('notices', { $or: [
+    DB.findPageNoSort('notices', { $or: [
         { info: { $regex: reg } },
         // { brand: { $regex: reg } }
     ]}, skip, limit,(err,len)=>{
@@ -112,7 +112,7 @@ router.get('/notice',function(req,res){
     var limit = pager.pageSize//将一页所展示数量赋给数据库参数limit
     var skip = (pager.pageCurrent - 1) *  pager.pageSize;//计算跳过的数据条数（商品数量）
     pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
-    DB.findPage('notices', {isDelete:true}, skip, limit,(err,len)=>{
+    DB.findPageNoSort('notices', {isDelete:true}, skip, limit,(err,len)=>{
         if (err) {
             res.json({
                 stutas: '1'
@@ -157,7 +157,7 @@ router.post('/noticeSearch', function (req, res) {
     var limit = pager.pageSize
     let skip = (pager.pageCurrent - 1) *  pager.pageSize;
     pager.pageCount = parseInt(Math.ceil(parseFloat(pager.maxNum) / parseFloat(pager.pageSize)));  //计算总页数
-    DB.findPage('notices',{$and:[
+    DB.findPageNoSort('notices',{$and:[
         {
            info: { $regex: reg }
         },

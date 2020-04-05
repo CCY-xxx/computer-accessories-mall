@@ -868,6 +868,8 @@ router.post("/saveOrder", function (req, res, next) {
     orderTotal = req.body.orderTotal;
   User.findOne({ userId: userId }, function (err, doc) {
     if (err) {
+      console.log("21211111111")
+
       res.json({
         status: "1",
         msg: err.message,
@@ -910,6 +912,8 @@ router.post("/saveOrder", function (req, res, next) {
 
       doc.save(function (err1, doc1) {
         if (err1) {
+          console.log("555555555555")
+
           res.json({
             status: "1",
             msg: err1.message,
@@ -926,6 +930,8 @@ router.post("/saveOrder", function (req, res, next) {
                 "overstock": goodDoc.overstock-item.productNum,
               },(err,doc2)=>{
                 if(err){
+                console.log("8888888888888")
+
                   res.json({
                     status: "1",
                     msg:err.message,
@@ -934,22 +940,21 @@ router.post("/saveOrder", function (req, res, next) {
                   return
                 }
                 console.log("342343")
-                  res.json({
-                    status: "0",
-                    msg: '',
-                    result: {
-                      orderId: order.orderId,
-                      orderTotal: order.orderTotal
-                    }
-                  });
-            
+                 
               })
             },
             
             )
          
           })
-    
+          res.json({
+            status: "0",
+            msg: '',
+            result: {
+              orderId: order.orderId,
+              orderTotal: order.orderTotal
+            }
+          });
       
       });
     

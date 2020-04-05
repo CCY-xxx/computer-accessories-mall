@@ -12,6 +12,7 @@ var produtSchema = new Schema({
   "productImage" : String,
   "checked":String,
   "productNum":Number,
+  "isUpStage":Boolean,
   "isPush":Boolean,
   "createTime":String,
   "updateTime":String,
