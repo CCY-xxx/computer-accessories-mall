@@ -88,10 +88,10 @@ router.get('/search', function (req, res) {
   let sortType = req.param("sortType");
   // let skip = (page-1)*pageSize;
   var priceGt = '',priceLte = '';
-  let params = {
-    isUpStage:true,
+  // let params = {
+  //   isUpStage:true,
 
-  };
+  // };
   console.log(keyword)
   if(priceLevel!='all'){
     switch (priceLevel){
@@ -115,8 +115,9 @@ router.get('/search', function (req, res) {
   var limit = pageSize
   let goodsModel =Goods.find( { $or: [
       { title: { $regex: reg } },
-      { brand: { $regex: reg } }
-  ]},params).limit(limit)
+      { brand: { $regex: reg } },
+      // {isUpStage:true }
+  ]}).limit(limit)
   if(sortType=='3'){
     goodsModel.sort({'createTime':dateSort})
   }else{
@@ -138,7 +139,9 @@ router.get('/search', function (req, res) {
           msg:'',
           result:{
               count:doc.length,
-              list:doc
+              list:doc.filter(item=>{
+               return item.isUpStage
+              })
           }
       });
       }else{

@@ -277,6 +277,9 @@
                   <a-button v-if="item.orther=='1'" type="primary">
                     <a-icon type="like" />好评
                   </a-button>
+                  <a-button v-if="item.orther=='2'">
+                     <a-icon type="dislike" />差评
+                  </a-button>
                 <a-tooltip slot="datetime" :title="item.createTime">
                   <span>{{item.createTime}}</span>
                 </a-tooltip>

@@ -1,9 +1,9 @@
 <%- include ../public/header.ejs%>
 <script type="text/javascript">
     $('#myModal').on('shown.bs.modal', function () {
-          $('#myInput').focus()
-        })
-    </script>
+        $('#myInput').focus()
+    })
+</script>
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-2">
@@ -18,102 +18,102 @@
                 <li class="active">添加商品
                 </li>
             </ol>
-            <div class="panel panel-default">
+<div class="panel panel-default">
 
-			    <div class="panel-heading">
-                        添加商品
-                </div>
-                <div class="panel-body">
-                    <div class="table-responsive input-form">
-                        <form action="/admin/product/doAdd" method="post" enctype="multipart/form-data">
-                            <ul>
-                                <li>  商品名称: <input type="text" name="title"/></li>
-                                <li>  商品编号: <input type="text" name="productId" value="<%=productId%>"></li>
-                                <li class="newspic">
-                                    <!-- 当reader读取完毕后，执行步骤8，即展示上传图片 -->
-                                        <img class="img" style="width:200px;height:100px;"  src="" alt="商品图片">
-                                </li>
-                                <li> <input type="file" id="logoUrl" name="productImage" onchange="showPic(this)"  style="display: none" multiple></li>
-                               
-                                        
-                                <li>  商品价格: <input type="number" name="price"/></li>
-                                <li>  商品分类: <input type="text" name="brand"/></li>
-                                <li>  商品货存: <input type="number" name="overstock"/></li>
-                                <li>
-                                    商品描述:
-                                    <textarea name="productDec" id="" cols="60" rows="8"></textarea>
-                                </li>
-                                <li>
-                                    商品发货地址:
-                                    <textarea name="from" id="" cols="30" rows="4"></textarea>
-                                </li>
-
-                                <li>
-                                    <br/>
-                                   
-                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">提交</button>
-                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-                            <div class="modal-dialog" role="document">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                  <h4 class="modal-title" id="exampleModalLabel">确定要新增此商品？</h4>
-                                </div>
-                                <!-- <div class="modal-body">
-                                  <form>
-                                     <div class="form-group">
-                                      <label for="message-text" class="control-label"></label>
-                                    </div>
-                                  </form>
-                                </div> -->
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                  <button type="submit" class="btn btn-default">确认</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                                </li>
-
-                            </ul>
+    <div class="panel-heading">
+        添加商品
+    </div>
+<div class="panel-body">
+<div class="table-responsive input-form">
+<form action="/admin/product/doAdd" method="post" enctype="multipart/form-data">
+<ul>
+<li> 商品名称: <input type="text" name="title" /></li>
+<li> 商品编号: <input type="text" name="productId" value="<%=productId%>"></li>
+<li class="newspic">
+<!-- 当reader读取完毕后，执行步骤8，即展示上传图片 -->
+<img class="img" style="width:200px;height:100px;" src="" alt="商品图片">
+</li>
+<li> <input type="file" id="logoUrl" name="productImage" onchange="showPic(this)"
+style="display: none" multiple></li>
 
 
-                        </form>
-                        <div style="display: flex;justify-content: center;">
-                            <a  onclick="window.history.back()" class="btn btn-primary ">返回</a>
-                        </div>
-                    </div>
-                </div>
+<li> 商品价格: <input type="number" name="price" /></li>
+<li> 商品分类: <input type="text" name="brand" /></li>
+<li> 商品货存: <input type="number" name="overstock" /></li>
+<li>
+商品描述:
+<textarea name="productDec" id="" cols="60" rows="8"></textarea>
+</li>
+<li>
+商品发货地址:
+<textarea name="from" id="" cols="30" rows="4"></textarea>
+</li>
+
+<li>
+<br />
+
+<button type="button" class="btn btn-danger" data-toggle="modal"
+data-target="#exampleModal" data-whatever="@mdo">提交</button>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+aria-labelledby="exampleModalLabel">
+<div class="modal-dialog" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal"
+aria-label="Close"><span aria-hidden="true">×</span></button>
+<h4 class="modal-title" id="exampleModalLabel">确定要新增此商品？</h4>
+</div>
+
+<div class="modal-footer">
+<button type="button" class="btn btn-default"
+data-dismiss="modal">取消</button>
+<button type="submit" class="btn btn-default">确认</button>
+</div>
+</div>
+</div>
+</div>
+</li>
+
+</ul>
 
 
-            </div>
+</form>
+<div style="display: flex;justify-content: center;">
+<a onclick="window.history.back()" class="btn btn-primary ">返回</a>
+</div>
+</div>
+</div>
+
+
+</div>
 
         </div>
     </div>
 </div>
 
 </body>
+
 </html>
 <script type="text/javascript">
     //上传-预览逻辑
-        $(".newspic").click(function() {    //1.点击默认图片，出发标签<a>的click事件
-            console.log($(this)[0].parentNode.childNodes[7].childNodes[1])
-            $(this)[0].parentNode.childNodes[7].childNodes[1].click();//2.触发input的点击事件，用户选择图片进行上传
-        });    
-        function showPic(data) {//3.当用户上传图片后，触发input标签的onchange事件，执行showPic()方法
-            if (data.files && data.files[0]) {//4.判断input标签的file是否存在
-                var reader = new FileReader();//5.实例化一个FileReader()接口
-                reader.readAsDataURL(data.files[0]);//6.通过readAsDataURL()方法读取文件，将图片内嵌在网页之中
-                 reader.onload = function(evt) {//7.调用FileReader()的onload事件，当文件读取成功时，执行8
-                     //8.将reader的result属性值赋值给data.parentNode.parentNode.childNodes[5].childNodes[3].src，实现图片预览
-                   
-                     console.log(data.parentNode.parentNode.childNodes[5].childNodes[3].src)
-                     
-                    data.parentNode.parentNode.childNodes[5].childNodes[3].src = evt.target.result; 
-                }
+    $(".newspic").click(function () {    //1.点击默认图片，出发标签<a>的click事件
+        console.log($(this)[0].parentNode.childNodes[7].childNodes[1])
+        $(this)[0].parentNode.childNodes[7].childNodes[1].click();//2.触发input的点击事件，用户选择图片进行上传
+    });
+    function showPic(data) {//3.当用户上传图片后，触发input标签的onchange事件，执行showPic()方法
+        if (data.files && data.files[0]) {//4.判断input标签的file是否存在
+            var reader = new FileReader();//5.实例化一个FileReader()接口
+            reader.readAsDataURL(data.files[0]);//6.通过readAsDataURL()方法读取文件，将图片内嵌在网页之中
+            reader.onload = function (evt) {//7.调用FileReader()的onload事件，当文件读取成功时，执行8
+                //8.将reader的result属性值赋值给data.parentNode.parentNode.childNodes[5].childNodes[3].src，实现图片预览
+
+                console.log(data.parentNode.parentNode.childNodes[5].childNodes[3].src)
+
+                data.parentNode.parentNode.childNodes[5].childNodes[3].src = evt.target.result;
             }
         }
-        
+    }
+
     //上传-提交保存逻辑
     //用户选择图片,点击提交；将数据通过表单(name-value)提交给后台；注意：需要表单enctype="multipart/form-data"；否则后台无法接受
-    </script>
+</script>

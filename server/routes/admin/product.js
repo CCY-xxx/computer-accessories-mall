@@ -515,4 +515,81 @@ router.get('/load', function (req, res) {
     })
 
 })
+
+//评价列表
+router.get('/evaluateList',function(req,res){
+DB.find("products",{},(err,doc)=>{
+    // console.log(doc)
+    let evaluateList=[]
+    doc.map(item=>{
+        if(item.evaluate){
+            evaluateList=evaluateList.concat(item.evaluate)
+        }
+      
+    })
+    console.log(evaluateList)
+
+    res.render('admin/product/evaluateList', {
+        list:evaluateList
+    });
+})
+})
+//删除评价
+router.get('/delEvaluate', function (req, res) {
+    //获取id
+
+    var id = req.query.id;
+    DB.find("products",{ "evaluate._id": new DB.ObjectID(id) },(err,doc)=>{
+       
+        console.log(doc[0])
+        let productId=doc[0].productId
+
+        DB.updateArr('products', { "productId": productId },{evaluate:{_id:new DB.ObjectID(id)}}, function (err) {
+            console.log(err)
+            if (!err) {
+                res.send("<script>location.href='/admin/product/evaluateList'</script>");
+                // res.redirect('admin/product/evaluateList');
+                // res.end()
+            }
+    
+        })
+    })
+ 
+
+})
+//由评价查询配件
+router.get('/evaluateToPei', function (req, res) {
+    //获取id
+
+    var id = req.query.id;
+
+    DB.find('products', { "evaluate._id": new DB.ObjectID(id) }, function (err,data) {
+        console.log(data)
+        if (!err) {
+            res.render('admin/product/edit', {
+                list: data[0]
+            });
+        }
+
+    })
+
+})
+//由评价查询评价人信息
+router.get('/evaluateToMan', function (req, res) {
+    //获取id
+
+    var userName = req.query.userName;
+
+    DB.find('users', { userName }, function (err,data) {
+        console.log(data)
+        if (!err) {
+            res.render('admin/user/userInfo', {
+           
+                userDoc: data[0]
+            });
+        }
+
+    })
+
+})
 module.exports = router;   /*暴露这个 router模块*/

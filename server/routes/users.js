@@ -810,7 +810,7 @@ router.get('/tradeNo/:tradeNo', async (req, res) => {
         if (!error && response.statusCode == 200) {
 
           var code = obj.alipay_trade_query_response.code
-          if (code == '10000') {
+          if (code&&code == '10000') {
             User.update({ "userId": userId, "orderList.orderId": outTradeNo }, {
               "orderList.$.orderStatus": '1'
 

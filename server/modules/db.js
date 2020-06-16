@@ -121,6 +121,18 @@ exports.update = function(collectionname, json1, json2, callback) {
     });
   });
 };
+//删除数据库数组嵌套元素数据
+exports.updateArr = function(collectionname, json1, json2, callback) {
+  __connectDb(function(db) {
+    db.collection(collectionname).update(json1, { $pull: json2 }, function(
+      error,
+      data
+    ) {
+      db.close();
+      callback(error, data);
+    });
+  });
+};
 
 //删除数据库数据
 exports.remove = function(collectionname, json, callback) {
